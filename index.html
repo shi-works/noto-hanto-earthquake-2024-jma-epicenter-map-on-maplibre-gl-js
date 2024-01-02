@@ -236,11 +236,11 @@
         const map = new maplibregl.Map({
             container: 'map',
             style: 'std.json',
-            center: [137.0517, 37.3107],
-            zoom: 9.7,
+            center: [136.9456, 37.2579],
+            zoom: 10.76,
             minZoom: 1,
             maxZoom: 23,
-            pitch: 0,
+            pitch: 57,
             maxPitch: 85,
             bearing: 0,
             hash: true,
@@ -272,7 +272,7 @@
         // Attributionを折りたたみ表示
         map.addControl(new maplibregl.AttributionControl({
             compact: true,
-            customAttribution: '（<a href="https://twitter.com/shi__works" target="_blank">Twitter</a> | <a href="" target="_blank">Github</a>）'
+            customAttribution: '（<a href="https://twitter.com/shi__works" target="_blank">Twitter</a> | <a href="https://github.com/shi-works/jma-2024noto-epicenter-map-on-maplibre-gl-js" target="_blank">Github</a>）'
         }));
 
         // 3D地形コントロール
