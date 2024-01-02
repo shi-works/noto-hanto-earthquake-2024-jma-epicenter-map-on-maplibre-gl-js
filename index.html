@@ -271,10 +271,10 @@
         });
 
         // ズーム・回転
-        map.addControl(new maplibregl.NavigationControl());
+        map.addControl(new maplibregl.NavigationControl(), 'top-left');
 
         // フルスクリーンモードのオンオフ
-        map.addControl(new maplibregl.FullscreenControl());
+        map.addControl(new maplibregl.FullscreenControl(), 'top-left');
 
         // 現在位置表示
         map.addControl(new maplibregl.GeolocateControl({
@@ -284,7 +284,7 @@
             fitBoundsOptions: { maxZoom: 18 },
             trackUserLocation: true,
             showUserLocation: true
-        }));
+        }), 'top-left');
 
         // スケール表示
         map.addControl(new maplibregl.ScaleControl({
@@ -303,7 +303,7 @@
             new maplibregl.TerrainControl({
                 source: 'aist-dem',
                 exaggeration: 1 // 標高を強調する倍率
-            })
+            }), 'top-left'
         );
 
         map.on('load', function () {
