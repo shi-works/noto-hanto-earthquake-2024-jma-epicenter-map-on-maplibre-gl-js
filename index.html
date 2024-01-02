@@ -217,19 +217,19 @@
     <div id='legend' class='legend'>
         <h4>Depth</h4>
         <div class="circle-depth" style='background-color: #FF0000;display: inline-block;'></div>
-        <span style="display: inline-block; margin-left: 5px;">20km未満</span><br>
+        <span style="display: inline-block; margin-left: 5px;">5km未満</span><br>
         <div class="circle-depth" style='background-color: #FF7F00;display: inline-block;'></div>
-        <span style="display: inline-block; margin-left: 5px;">40km未満</span><br>
+        <span style="display: inline-block; margin-left: 5px;">10km未満</span><br>
         <div class="circle-depth" style='background-color: #FFFF00;display: inline-block;'></div>
-        <span style="display: inline-block; margin-left: 5px;">60km未満</span><br>
+        <span style="display: inline-block; margin-left: 5px;">15km未満</span><br>
         <div class="circle-depth" style='background-color: #00FF00;display: inline-block;'></div>
-        <span style="display: inline-block; margin-left: 5px;">100km未満</span><br>
+        <span style="display: inline-block; margin-left: 5px;">20km未満</span><br>
         <div class="circle-depth" style='background-color: #00FFFF;display: inline-block;'></div>
-        <span style="display: inline-block; margin-left: 5px;">150km未満</span><br>
+        <span style="display: inline-block; margin-left: 5px;">30km未満</span><br>
         <div class="circle-depth" style='background-color: #0000FF;display: inline-block;'></div>
-        <span style="display: inline-block; margin-left: 5px;">300km未満</span><br>
+        <span style="display: inline-block; margin-left: 5px;">40km未満</span><br>
         <div class="circle-depth" style='background-color: #7F00FF;display: inline-block;'></div>
-        <span style="display: inline-block; margin-left: 5px;">300km以上</span><br><br>
+        <span style="display: inline-block; margin-left: 5px;">40km以上</span><br><br>
         <h4>Magnitude</h4>
         <div class="circle-container">
             <div class="circle small"></div>
@@ -359,25 +359,25 @@
                     'circle-stroke-color': [
                         "step",
                         ["to-number", ["get", "dep"]],
-                        "#FF0000",  // 20km未満
-                        20, "#FF7F00",  // 40km未満
-                        40, "#FFFF00",  // 60km未満
-                        60, "#00FF00",  // 100km未満
-                        100, "#00FFFF",  // 150km未満
-                        150, "#0000FF",  // 300km未満
-                        300, "#7F00FF",  // 300km以上
+                        "#FF0000",  // 5km未満
+                        5, "#FF7F00",  // 10km未満
+                        10, "#FFFF00",  // 15km未満
+                        15, "#00FF00",  // 20km未満
+                        20, "#00FFFF",  // 30km未満
+                        30, "#0000FF",  // 40km未満
+                        40, "#7F00FF",  // 40km以上
                     ],
                     'circle-stroke-width': 1.5,
                     'circle-color': [
                         "step",
                         ["to-number", ["get", "dep"]],
-                        "rgba(255, 0, 0, 0.2)",         // 20km未満
-                        20, "rgba(255, 127, 0, 0.2)",   // 40km未満
-                        40, "rgba(255, 255, 0, 0.2)",   // 60km未満
-                        60, "rgba(0, 255, 0, 0.2)",     // 100km未満
-                        100, "rgba(0, 255, 255, 0.2)",  // 150km未満
-                        150, "rgba(0, 0, 255, 0.2)",    // 300km未満
-                        300, "rgba(127, 0, 255, 0.2)",  // 300km以上
+                        "rgba(255, 0, 0, 0.2)",         // 5km未満
+                        5, "rgba(255, 127, 0, 0.2)",   // 10km未満
+                        10, "rgba(255, 255, 0, 0.2)",   // 15km未満
+                        15, "rgba(0, 255, 0, 0.2)",     // 20km未満
+                        20, "rgba(0, 255, 255, 0.2)",  // 30km未満
+                        30, "rgba(0, 0, 255, 0.2)",    // 40km未満
+                        40, "rgba(127, 0, 255, 0.2)",  // 40km以上
                     ],
                     'circle-radius': [
                         "interpolate",
@@ -413,25 +413,25 @@
                     'circle-stroke-color': [
                         "step",
                         ["to-number", ["get", "dep"]],
-                        "#FF0000",  // 20km未満
-                        20, "#FF7F00",  // 40km未満
-                        40, "#FFFF00",  // 60km未満
-                        60, "#00FF00",  // 100km未満
-                        100, "#00FFFF",  // 150km未満
-                        150, "#0000FF",  // 300km未満
-                        300, "#7F00FF",  // 300km以上
+                        "#FF0000",  // 5km未満
+                        5, "#FF7F00",  // 10km未満
+                        10, "#FFFF00",  // 15km未満
+                        15, "#00FF00",  // 20km未満
+                        20, "#00FFFF",  // 30km未満
+                        30, "#0000FF",  // 40km未満
+                        40, "#7F00FF",  // 40km以上
                     ],
                     'circle-stroke-width': 1.5,
                     'circle-color': [
                         "step",
                         ["to-number", ["get", "dep"]],
-                        "rgba(255, 0, 0, 0.2)",         // 20km未満
-                        20, "rgba(255, 127, 0, 0.2)",   // 40km未満
-                        40, "rgba(255, 255, 0, 0.2)",   // 60km未満
-                        60, "rgba(0, 255, 0, 0.2)",     // 100km未満
-                        100, "rgba(0, 255, 255, 0.2)",  // 150km未満
-                        150, "rgba(0, 0, 255, 0.2)",    // 300km未満
-                        300, "rgba(127, 0, 255, 0.2)",  // 300km以上
+                        "rgba(255, 0, 0, 0.2)",         // 5km未満
+                        5, "rgba(255, 127, 0, 0.2)",   // 10km未満
+                        10, "rgba(255, 255, 0, 0.2)",   // 15km未満
+                        15, "rgba(0, 255, 0, 0.2)",     // 20km未満
+                        20, "rgba(0, 255, 255, 0.2)",  // 30km未満
+                        30, "rgba(0, 0, 255, 0.2)",    // 40km未満
+                        40, "rgba(127, 0, 255, 0.2)",  // 40km以上
                     ],
                     'circle-radius': [
                         "interpolate",
