@@ -186,11 +186,34 @@
         .circle.large .circle-text {
             font-size: 12px;
         }
+
+        .legend-hanrei {
+            position: fixed;
+            right: 10px;
+            bottom: 340px;
+            z-index: 1;
+            width: auto;
+        }
+
+        .image-container {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .legend-hanrei img {
+            width: 50%;
+            height: auto;
+        }
     </style>
 </head>
 
 <body>
     <div id="map"></div>
+    <div class="legend-hanrei">
+        <div class="image-container">
+            <img src="legend.png" alt="Legend">
+        </div>
+    </div>
     <div id='legend' class='legend'>
         <h4>Depth</h4>
         <div class="circle-depth" style='background-color: #FF0000;display: inline-block;'></div>
