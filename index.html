@@ -60,7 +60,7 @@
             background: rgba(255, 255, 255, 0.9);
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.9);
             border-radius: 5px;
-            width: 200px;
+            width: 220px;
             height: 90px;
             overflow: scroll;
         }
@@ -356,6 +356,8 @@
                 minzoom: 1,
                 maxzoom: 23,
                 'paint': {
+                    'circle-stroke-color': "#000000",
+                    /*
                     'circle-stroke-color': [
                         "step",
                         ["to-number", ["get", "dep"]],
@@ -367,17 +369,18 @@
                         30, "#0000FF",  // 40km未満
                         40, "#7F00FF",  // 40km以上
                     ],
+                    */
                     'circle-stroke-width': 1.5,
                     'circle-color': [
                         "step",
                         ["to-number", ["get", "dep"]],
-                        "rgba(255, 0, 0, 0.2)",         // 5km未満
-                        5, "rgba(255, 127, 0, 0.2)",   // 10km未満
-                        10, "rgba(255, 255, 0, 0.2)",   // 15km未満
-                        15, "rgba(0, 255, 0, 0.2)",     // 20km未満
-                        20, "rgba(0, 255, 255, 0.2)",  // 30km未満
-                        30, "rgba(0, 0, 255, 0.2)",    // 40km未満
-                        40, "rgba(127, 0, 255, 0.2)",  // 40km以上
+                        "rgba(255, 0, 0, 0.7)",         // 5km未満
+                        5, "rgba(255, 127, 0, 0.7)",   // 10km未満
+                        10, "rgba(255, 255, 0, 0.7)",   // 15km未満
+                        15, "rgba(0, 255, 0, 0.7)",     // 20km未満
+                        20, "rgba(0, 255, 255, 0.7)",  // 30km未満
+                        30, "rgba(0, 0, 255, 0.7)",    // 40km未満
+                        40, "rgba(127, 0, 255, 0.7)",  // 40km以上
                     ],
                     'circle-radius': [
                         "interpolate",
@@ -410,6 +413,8 @@
                 minzoom: 1,
                 maxzoom: 23,
                 'paint': {
+                    'circle-stroke-color': "#000000",
+                    /*
                     'circle-stroke-color': [
                         "step",
                         ["to-number", ["get", "dep"]],
@@ -421,17 +426,75 @@
                         30, "#0000FF",  // 40km未満
                         40, "#7F00FF",  // 40km以上
                     ],
+                    */
                     'circle-stroke-width': 1.5,
                     'circle-color': [
                         "step",
                         ["to-number", ["get", "dep"]],
-                        "rgba(255, 0, 0, 0.2)",         // 5km未満
-                        5, "rgba(255, 127, 0, 0.2)",   // 10km未満
-                        10, "rgba(255, 255, 0, 0.2)",   // 15km未満
-                        15, "rgba(0, 255, 0, 0.2)",     // 20km未満
-                        20, "rgba(0, 255, 255, 0.2)",  // 30km未満
-                        30, "rgba(0, 0, 255, 0.2)",    // 40km未満
-                        40, "rgba(127, 0, 255, 0.2)",  // 40km以上
+                        "rgba(255, 0, 0, 0.7)",         // 5km未満
+                        5, "rgba(255, 127, 0, 0.7)",   // 10km未満
+                        10, "rgba(255, 255, 0, 0.7)",   // 15km未満
+                        15, "rgba(0, 255, 0, 0.7)",     // 20km未満
+                        20, "rgba(0, 255, 255, 0.7)",  // 30km未満
+                        30, "rgba(0, 0, 255, 0.7)",    // 40km未満
+                        40, "rgba(127, 0, 255, 0.7)",  // 40km以上
+                    ],
+                    'circle-radius': [
+                        "interpolate",
+                        ["linear"],
+                        ["to-number", ["get", "mag"]],
+                        1, 2,
+                        3, 4,
+                        4, 8,
+                        5, 20,
+                        6, 40,
+                        7, 60,
+                        8, 80,
+                        9, 100
+                    ]
+                }
+            });
+
+            // 気象庁 震央分布ソース
+            map.addSource("jma-hypo-0103", {
+                type: "geojson",
+                data: 'https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240103.geojson',
+                attribution: '<a href="https://www.jma.go.jp/bosai/map.html#9/37.437/137.255/&contents=hypo">気象庁 震央分布</a>'
+            });
+
+            // 気象庁 震央分布レイヤ
+            map.addLayer({
+                'id': 'jma-hypo-0103',
+                'type': 'circle',
+                'source': 'jma-hypo-0103',
+                minzoom: 1,
+                maxzoom: 23,
+                'paint': {
+                    'circle-stroke-color': "#000000",
+                    /*
+                    'circle-stroke-color': [
+                        "step",
+                        ["to-number", ["get", "dep"]],
+                        "#FF0000",  // 5km未満
+                        5, "#FF7F00",  // 10km未満
+                        10, "#FFFF00",  // 15km未満
+                        15, "#00FF00",  // 20km未満
+                        20, "#00FFFF",  // 30km未満
+                        30, "#0000FF",  // 40km未満
+                        40, "#7F00FF",  // 40km以上
+                    ],
+                    */
+                    'circle-stroke-width': 1.5,
+                    'circle-color': [
+                        "step",
+                        ["to-number", ["get", "dep"]],
+                        "rgba(255, 0, 0, 0.7)",         // 5km未満
+                        5, "rgba(255, 127, 0, 0.7)",   // 10km未満
+                        10, "rgba(255, 255, 0, 0.7)",   // 15km未満
+                        15, "rgba(0, 255, 0, 0.7)",     // 20km未満
+                        20, "rgba(0, 255, 255, 0.7)",  // 30km未満
+                        30, "rgba(0, 0, 255, 0.7)",    // 40km未満
+                        40, "rgba(127, 0, 255, 0.7)",  // 40km以上
                     ],
                     'circle-radius': [
                         "interpolate",
