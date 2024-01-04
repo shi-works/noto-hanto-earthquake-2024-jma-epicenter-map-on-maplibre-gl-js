@@ -204,11 +204,36 @@
             width: 50%;
             height: auto;
         }
+
+        #select-geojson {
+            padding: 3px 4px;
+            font: 12px/14px Arial, Helvetica, sans-serif;
+            color: black;
+            background: white;
+            background: rgba(255, 255, 255, 1.0);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            width: fit-content;
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            z-index: 10;
+        }
     </style>
 </head>
 
 <body>
     <div id="map"></div>
+    <div id="select-geojson">
+        <label><b>震央分布</b></label><br>
+        <select id="geojson">
+            <option value="jma-hypo-all">全日</option>
+            <option value="jma-hypo-0101">2024年01月01日</option>
+            <option value="jma-hypo-0102">2024年01月02日</option>
+            <option value="jma-hypo-0103">2024年01月03日</option>
+            <option value="jma-hypo-0104">2024年01月04日</option>
+        </select>
+    </div>
     <div class="legend-hanrei">
         <div class="image-container">
             <img src="legend.png" alt="Legend">
@@ -321,22 +346,22 @@
             map.setTerrain({ 'source': 'aist-dem', 'exaggeration': 1 });
 
             /*
-            // 産総研 活断層データベースソース
-            map.addSource("aist-activefault", {
+            // 産総研 20万分の1日本シームレス地質図V2ソース
+            map.addSource("aist-seamless", {
                 type: 'raster',
                 tiles: [
-                    'https://unit.aist.go.jp/ievg/actfault-rg/tile/segment/{z}/{x}/{y}.png',
+                    'https://gbank.gsj.jp/seamless/v2/api/1.3.1/tiles/{z}/{y}/{x}.png',
                 ],
-                attribution: '<a href="https://gbank.gsj.jp/activefault/search" target="_blank">産総研 活断層データベース</a>'
+                attribution: '<a href="https://gbank.gsj.jp/seamless/v2/api/1.3.1/" target="_blank">産総研 20万分の1日本シームレス地質図V2</a>'
             });
 
-            // 産総研 活断層データベースレイヤ
+            // 産総研 20万分の1日本シームレス地質図V2レイヤ
             map.addLayer({
-                "id": "aist-activefault",
+                "id": "aist-seamless",
                 "type": "raster",
-                "source": "aist-activefault",
+                "source": "aist-seamless",
                 "paint": {
-                    "raster-opacity": 1
+                    "raster-opacity": 0.8
                 }
             });
             */
@@ -512,6 +537,63 @@
                 }
             });
 
+            // 気象庁 震央分布ソース
+            map.addSource("jma-hypo-0104", {
+                type: "geojson",
+                data: 'https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240104.geojson',
+                attribution: '<a href="https://www.jma.go.jp/bosai/map.html#9/37.437/137.255/&contents=hypo">気象庁 震央分布</a>'
+            });
+
+            // 気象庁 震央分布レイヤ
+            map.addLayer({
+                'id': 'jma-hypo-0104',
+                'type': 'circle',
+                'source': 'jma-hypo-0104',
+                minzoom: 1,
+                maxzoom: 23,
+                'paint': {
+                    'circle-stroke-color': "#000000",
+                    /*
+                    'circle-stroke-color': [
+                        "step",
+                        ["to-number", ["get", "dep"]],
+                        "#FF0000",  // 5km未満
+                        5, "#FF7F00",  // 10km未満
+                        10, "#FFFF00",  // 15km未満
+                        15, "#00FF00",  // 20km未満
+                        20, "#00FFFF",  // 30km未満
+                        30, "#0000FF",  // 40km未満
+                        40, "#7F00FF",  // 40km以上
+                    ],
+                    */
+                    'circle-stroke-width': 1.5,
+                    'circle-color': [
+                        "step",
+                        ["to-number", ["get", "dep"]],
+                        "rgba(255, 0, 0, 0.7)",         // 5km未満
+                        5, "rgba(255, 127, 0, 0.7)",   // 10km未満
+                        10, "rgba(255, 255, 0, 0.7)",   // 15km未満
+                        15, "rgba(0, 255, 0, 0.7)",     // 20km未満
+                        20, "rgba(0, 255, 255, 0.7)",  // 30km未満
+                        30, "rgba(0, 0, 255, 0.7)",    // 40km未満
+                        40, "rgba(127, 0, 255, 0.7)",  // 40km以上
+                    ],
+                    'circle-radius': [
+                        "interpolate",
+                        ["linear"],
+                        ["to-number", ["get", "mag"]],
+                        1, 2,
+                        3, 4,
+                        4, 8,
+                        5, 20,
+                        6, 40,
+                        7, 60,
+                        8, 80,
+                        9, 100
+                    ]
+                }
+            });
+
         });
 
         // スライダーでデジタル標高地形図の不透明度を制御
@@ -594,6 +676,113 @@
                 )
                 .addTo(map);
         });
+
+        // クリック時のポップアップ表示
+        map.on('click', 'jma-hypo-0103', (e) => {
+            var lng = e.features[0].geometry.coordinates[0];
+            var lat = e.features[0].geometry.coordinates[1];
+            var date = e.features[0].properties['date'];
+            var dep = e.features[0].properties['dep'];
+            var mag = e.features[0].properties['mag'];
+
+            new maplibregl.Popup()
+                .setLngLat(e.lngLat)
+                .setHTML(
+                    '<table class="quake-info">' +
+                    '<tr>' +
+                    '<th></th>' +
+                    '<th></th>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<td>発生日時：</td>' +
+                    '<td><b>' + date + '</b></td>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<td>深さ：</td>' +
+                    '<td><b>' + dep + ' km' + '</b></td>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<td>M：</td>' +
+                    '<td><b>' + mag + '</b></td>' +
+                    '</tr>' +
+                    '</table>' +
+                    '<a href="https://www.google.com/maps?q=' + lat + "," + lng + "&hl=ja" + '" target="_blank" class="google-maps-link">🌎Google Maps</a>'
+                )
+                .addTo(map);
+        });
+
+        // クリック時のポップアップ表示
+        map.on('click', 'jma-hypo-0104', (e) => {
+            var lng = e.features[0].geometry.coordinates[0];
+            var lat = e.features[0].geometry.coordinates[1];
+            var date = e.features[0].properties['date'];
+            var dep = e.features[0].properties['dep'];
+            var mag = e.features[0].properties['mag'];
+
+            new maplibregl.Popup()
+                .setLngLat(e.lngLat)
+                .setHTML(
+                    '<table class="quake-info">' +
+                    '<tr>' +
+                    '<th></th>' +
+                    '<th></th>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<td>発生日時：</td>' +
+                    '<td><b>' + date + '</b></td>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<td>深さ：</td>' +
+                    '<td><b>' + dep + ' km' + '</b></td>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<td>M：</td>' +
+                    '<td><b>' + mag + '</b></td>' +
+                    '</tr>' +
+                    '</table>' +
+                    '<a href="https://www.google.com/maps?q=' + lat + "," + lng + "&hl=ja" + '" target="_blank" class="google-maps-link">🌎Google Maps</a>'
+                )
+                .addTo(map);
+        });
+
+        // イベントリスナーを追加
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('geojson').addEventListener('change', SelectGeoJSON);
+        });
+
+        // GeoJSON表示切り替え制御
+        function SelectGeoJSON() {
+            // valueを取得
+            var GeoJSONName = document.getElementById('geojson').value;
+
+            if (GeoJSONName === 'jma-hypo-all') {
+                map.setLayoutProperty('jma-hypo-0101', 'visibility', 'visible');
+                map.setLayoutProperty('jma-hypo-0102', 'visibility', 'visible');
+                map.setLayoutProperty('jma-hypo-0103', 'visibility', 'visible');
+                map.setLayoutProperty('jma-hypo-0104', 'visibility', 'visible');
+            } else if (GeoJSONName === 'jma-hypo-0101') {
+                map.setLayoutProperty('jma-hypo-0101', 'visibility', 'visible');
+                map.setLayoutProperty('jma-hypo-0102', 'visibility', 'none');
+                map.setLayoutProperty('jma-hypo-0103', 'visibility', 'none');
+                map.setLayoutProperty('jma-hypo-0104', 'visibility', 'none');
+            } else if (GeoJSONName === 'jma-hypo-0102') {
+                map.setLayoutProperty('jma-hypo-0101', 'visibility', 'none');
+                map.setLayoutProperty('jma-hypo-0102', 'visibility', 'visible');
+                map.setLayoutProperty('jma-hypo-0103', 'visibility', 'none');
+                map.setLayoutProperty('jma-hypo-0104', 'visibility', 'none');
+            } else if (GeoJSONName === 'jma-hypo-0103') {
+                map.setLayoutProperty('jma-hypo-0101', 'visibility', 'none');
+                map.setLayoutProperty('jma-hypo-0102', 'visibility', 'none');
+                map.setLayoutProperty('jma-hypo-0103', 'visibility', 'visible');
+                map.setLayoutProperty('jma-hypo-0104', 'visibility', 'none');
+            } else if (GeoJSONName === 'jma-hypo-0104') {
+                map.setLayoutProperty('jma-hypo-0101', 'visibility', 'none');
+                map.setLayoutProperty('jma-hypo-0102', 'visibility', 'none');
+                map.setLayoutProperty('jma-hypo-0103', 'visibility', 'none');
+                map.setLayoutProperty('jma-hypo-0104', 'visibility', 'visible');
+            }
+
+        }
     </script>
 </body>
 
