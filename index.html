@@ -234,6 +234,7 @@
             <option value="jma-hypo-0104">2024年01月04日</option>
             <option value="jma-hypo-0105">2024年01月05日</option>
             <option value="jma-hypo-0106">2024年01月06日</option>
+            <option value="jma-hypo-0107">2024年01月07日</option>
         </select>
     </div>
     <div class="legend-hanrei">
@@ -710,6 +711,63 @@
                 }
             });
 
+            // 気象庁 震央分布ソース
+            map.addSource("jma-hypo-0107", {
+                type: "geojson",
+                data: 'https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240107.geojson',
+                attribution: '<a href="https://www.jma.go.jp/bosai/map.html#9/37.437/137.255/&contents=hypo">気象庁 震央分布</a>'
+            });
+
+            // 気象庁 震央分布レイヤ
+            map.addLayer({
+                'id': 'jma-hypo-0107',
+                'type': 'circle',
+                'source': 'jma-hypo-0107',
+                minzoom: 1,
+                maxzoom: 23,
+                'paint': {
+                    'circle-stroke-color': "#000000",
+                    /*
+                    'circle-stroke-color': [
+                        "step",
+                        ["to-number", ["get", "dep"]],
+                        "#FF0000",  // 5km未満
+                        5, "#FF7F00",  // 10km未満
+                        10, "#FFFF00",  // 15km未満
+                        15, "#00FF00",  // 20km未満
+                        20, "#00FFFF",  // 30km未満
+                        30, "#0000FF",  // 40km未満
+                        40, "#7F00FF",  // 40km以上
+                    ],
+                    */
+                    'circle-stroke-width': 1.5,
+                    'circle-color': [
+                        "step",
+                        ["to-number", ["get", "dep"]],
+                        "rgba(255, 0, 0, 0.7)",         // 5km未満
+                        5, "rgba(255, 127, 0, 0.7)",   // 10km未満
+                        10, "rgba(255, 255, 0, 0.7)",   // 15km未満
+                        15, "rgba(0, 255, 0, 0.7)",     // 20km未満
+                        20, "rgba(0, 255, 255, 0.7)",  // 30km未満
+                        30, "rgba(0, 0, 255, 0.7)",    // 40km未満
+                        40, "rgba(127, 0, 255, 0.7)",  // 40km以上
+                    ],
+                    'circle-radius': [
+                        "interpolate",
+                        ["linear"],
+                        ["to-number", ["get", "mag"]],
+                        1, 2,
+                        3, 4,
+                        4, 8,
+                        5, 20,
+                        6, 40,
+                        7, 60,
+                        8, 80,
+                        9, 100
+                    ]
+                }
+            });
+
         });
 
         // スライダーでデジタル標高地形図の不透明度を制御
@@ -929,6 +987,40 @@
                 .addTo(map);
         });
 
+        // クリック時のポップアップ表示
+        map.on('click', 'jma-hypo-0107', (e) => {
+            var lng = e.features[0].geometry.coordinates[0];
+            var lat = e.features[0].geometry.coordinates[1];
+            var date = e.features[0].properties['date'];
+            var dep = e.features[0].properties['dep'];
+            var mag = e.features[0].properties['mag'];
+
+            new maplibregl.Popup()
+                .setLngLat(e.lngLat)
+                .setHTML(
+                    '<table class="quake-info">' +
+                    '<tr>' +
+                    '<th></th>' +
+                    '<th></th>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<td>発生日時：</td>' +
+                    '<td><b>' + date + '</b></td>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<td>深さ：</td>' +
+                    '<td><b>' + dep + ' km' + '</b></td>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<td>M：</td>' +
+                    '<td><b>' + mag + '</b></td>' +
+                    '</tr>' +
+                    '</table>' +
+                    '<a href="https://www.google.com/maps?q=' + lat + "," + lng + "&hl=ja" + '" target="_blank" class="google-maps-link">🌎Google Maps</a>'
+                )
+                .addTo(map);
+        });
+
         // イベントリスナーを追加
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('geojson').addEventListener('change', SelectGeoJSON);
@@ -946,6 +1038,7 @@
                 map.setLayoutProperty('jma-hypo-0104', 'visibility', 'visible');
                 map.setLayoutProperty('jma-hypo-0105', 'visibility', 'visible');
                 map.setLayoutProperty('jma-hypo-0106', 'visibility', 'visible');
+                map.setLayoutProperty('jma-hypo-0107', 'visibility', 'visible');
             } else if (GeoJSONName === 'jma-hypo-0101') {
                 map.setLayoutProperty('jma-hypo-0101', 'visibility', 'visible');
                 map.setLayoutProperty('jma-hypo-0102', 'visibility', 'none');
@@ -953,6 +1046,7 @@
                 map.setLayoutProperty('jma-hypo-0104', 'visibility', 'none');
                 map.setLayoutProperty('jma-hypo-0105', 'visibility', 'none');
                 map.setLayoutProperty('jma-hypo-0106', 'visibility', 'none');
+                map.setLayoutProperty('jma-hypo-0107', 'visibility', 'none');
             } else if (GeoJSONName === 'jma-hypo-0102') {
                 map.setLayoutProperty('jma-hypo-0101', 'visibility', 'none');
                 map.setLayoutProperty('jma-hypo-0102', 'visibility', 'visible');
@@ -960,6 +1054,7 @@
                 map.setLayoutProperty('jma-hypo-0104', 'visibility', 'none');
                 map.setLayoutProperty('jma-hypo-0105', 'visibility', 'none');
                 map.setLayoutProperty('jma-hypo-0106', 'visibility', 'none');
+                map.setLayoutProperty('jma-hypo-0107', 'visibility', 'none');
             } else if (GeoJSONName === 'jma-hypo-0103') {
                 map.setLayoutProperty('jma-hypo-0101', 'visibility', 'none');
                 map.setLayoutProperty('jma-hypo-0102', 'visibility', 'none');
@@ -967,6 +1062,7 @@
                 map.setLayoutProperty('jma-hypo-0104', 'visibility', 'none');
                 map.setLayoutProperty('jma-hypo-0105', 'visibility', 'none');
                 map.setLayoutProperty('jma-hypo-0106', 'visibility', 'none');
+                map.setLayoutProperty('jma-hypo-0107', 'visibility', 'none');
             } else if (GeoJSONName === 'jma-hypo-0104') {
                 map.setLayoutProperty('jma-hypo-0101', 'visibility', 'none');
                 map.setLayoutProperty('jma-hypo-0102', 'visibility', 'none');
@@ -974,6 +1070,7 @@
                 map.setLayoutProperty('jma-hypo-0104', 'visibility', 'visible');
                 map.setLayoutProperty('jma-hypo-0105', 'visibility', 'none');
                 map.setLayoutProperty('jma-hypo-0106', 'visibility', 'none');
+                map.setLayoutProperty('jma-hypo-0107', 'visibility', 'none');
             } else if (GeoJSONName === 'jma-hypo-0105') {
                 map.setLayoutProperty('jma-hypo-0101', 'visibility', 'none');
                 map.setLayoutProperty('jma-hypo-0102', 'visibility', 'none');
@@ -981,6 +1078,7 @@
                 map.setLayoutProperty('jma-hypo-0104', 'visibility', 'none');
                 map.setLayoutProperty('jma-hypo-0105', 'visibility', 'visible');
                 map.setLayoutProperty('jma-hypo-0106', 'visibility', 'none');
+                map.setLayoutProperty('jma-hypo-0107', 'visibility', 'none');
             } else if (GeoJSONName === 'jma-hypo-0106') {
                 map.setLayoutProperty('jma-hypo-0101', 'visibility', 'none');
                 map.setLayoutProperty('jma-hypo-0102', 'visibility', 'none');
@@ -988,6 +1086,15 @@
                 map.setLayoutProperty('jma-hypo-0104', 'visibility', 'none');
                 map.setLayoutProperty('jma-hypo-0105', 'visibility', 'none');
                 map.setLayoutProperty('jma-hypo-0106', 'visibility', 'visible');
+                map.setLayoutProperty('jma-hypo-0107', 'visibility', 'none');
+            } else if (GeoJSONName === 'jma-hypo-0107') {
+                map.setLayoutProperty('jma-hypo-0101', 'visibility', 'none');
+                map.setLayoutProperty('jma-hypo-0102', 'visibility', 'none');
+                map.setLayoutProperty('jma-hypo-0103', 'visibility', 'none');
+                map.setLayoutProperty('jma-hypo-0104', 'visibility', 'none');
+                map.setLayoutProperty('jma-hypo-0105', 'visibility', 'none');
+                map.setLayoutProperty('jma-hypo-0106', 'visibility', 'none');
+                map.setLayoutProperty('jma-hypo-0107', 'visibility', 'visible');
             }
 
         }
