@@ -17,20 +17,27 @@ jobs:
 
       - name: Download GeoJSON Files
         run: |
-          curl -o data/mlit/before_after.geojson https://www.mlit.go.jp/road/r6noto/map/json/before_after.geojson
-          curl -o data/mlit/damage_situation_aerial_photography.geojson https://www.mlit.go.jp/road/r6noto/map/json/damage_situation_aerial_photography.geojson
-          curl -o data/mlit/damaged_area.geojson https://www.mlit.go.jp/road/r6noto/map/json/damaged_area.geojson
-          curl -o data/mlit/recovery_point.geojson https://www.mlit.go.jp/road/r6noto/map/json/recovery_point.geojson
-          curl -o data/mlit/ETC2.0_speed_data.geojson https://www.mlit.go.jp/road/r6noto/map/json/ETC2.0_speed_data.geojson
-          curl -o data/mlit/emergency_restored_section.geojson https://www.mlit.go.jp/road/r6noto/map/json/emergency_restored_section.geojson
-          curl -o data/mlit/sagyou.geojson https://www.mlit.go.jp/road/r6noto/map/json/sagyou.geojson
-          curl -o data/mlit/img/usage_guide.png https://www.mlit.go.jp/road/r6noto/map/img/usage_guide.png
-
+          curl -o data/hypo20240101.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240101.geojson
+          curl -o data/hypo20240102.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240102.geojson
+          curl -o data/hypo20240103.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240103.geojson
+          curl -o data/hypo20240104.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240104.geojson
+          curl -o data/hypo20240105.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240105.geojson
+          curl -o data/hypo20240106.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240106.geojson
+          curl -o data/hypo20240107.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240107.geojson
+          curl -o data/hypo20240108.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240108.geojson
+          curl -o data/hypo20240109.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240109.geojson
+          curl -o data/hypo20240110.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240110.geojson
+          curl -o data/hypo20240111.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240111.geojson
+          curl -o data/hypo20240112.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240112.geojson
+          curl -o data/hypo20240113.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240113.geojson
+          curl -o data/hypo20240114.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240114.geojson
+          curl -o data/hypo20240115.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240115.geojson
+          curl -o data/hypo20240116.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240116.geojson
+          
       - name: Commit and Push Changes
         run: |
           git config --global user.email "y.shiwaku.5519@gmail.com"
           git config --global user.name "shi-works"
-          git add data/mlit/*.geojson
-          git add data/mlit/img/usage_guide.png
-          git diff --staged --quiet || (git commit -m "Update GeoJSON files and image" && git push)
+          git add data/*.geojson
+          git diff --staged --quiet || (git commit -m "Update GeoJSON files" && git push)
 
