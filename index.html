@@ -494,11 +494,6 @@
             digieleliderOpactiyValue.textContent = e.target.value + '%';
         });
 
-        // イベントリスナーを追加
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('geojson').addEventListener('change', SelectGeoJSON);
-        });
-
         // レイヤーのIDを配列として格納
         const layerIds = [
             'hypo20240101',
@@ -537,9 +532,11 @@
         }
 
         // イベントリスナー内で関数を呼び出し
-        document.getElementById('geojson').addEventListener('change', function () {
-            const selectedGeoJSON = this.value;
-            updateLayerVisibility(selectedGeoJSON);
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('geojson').addEventListener('change', function () {
+                const selectedGeoJSON = this.value;
+                updateLayerVisibility(selectedGeoJSON);
+            });
         });
 
     </script>
