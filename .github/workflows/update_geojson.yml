@@ -33,6 +33,7 @@ jobs:
           curl -o data/hypo20240114.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240114.geojson
           curl -o data/hypo20240115.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240115.geojson
           curl -o data/hypo20240116.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240116.geojson
+          curl -o data/hypo20240117.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240117.geojson
           
       - name: Commit and Push Changes
         run: |
