@@ -7,6 +7,8 @@
     <script src='https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js'></script>
     <link href='https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css' rel='stylesheet' />
     <script src="https://unpkg.com/pmtiles@2.11.0/dist/index.js"></script>
+    <script type="module" src="./dist/maplibre-gl-opacity.js"></script>
+    <link href='./dist/maplibre-gl-opacity.css' rel='stylesheet' />
     <style>
         body {
             margin: 0;
@@ -100,22 +102,6 @@
             font: 12px/14px Arial, Helvetica, sans-serif;
         }
 
-        #geojsonSelector {
-            padding: 3px 4px;
-            font: 12px/14px Arial, Helvetica, sans-serif;
-            color: black;
-            background: white;
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-            border-radius: 5px;
-            /*width: fit-content;*/
-            width: 110px;
-            left: 10px;
-            position: absolute;
-            top: 5px;
-            z-index: 1;
-        }
-
         .legend {
             background-color: #fff;
             border-radius: 3px;
@@ -205,6 +191,21 @@
             height: auto;
         }
 
+        #select-tiles {
+            padding: 3px 4px;
+            font: 12px/14px Arial, Helvetica, sans-serif;
+            color: black;
+            background: white;
+            background: rgba(255, 255, 255, 1.0);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            width: fit-content;
+            position: absolute;
+            top: 10px;
+            left: 50px;
+            z-index: 10;
+        }
+
         #select-geojson {
             padding: 3px 4px;
             font: 12px/14px Arial, Helvetica, sans-serif;
@@ -224,6 +225,13 @@
 
 <body>
     <div id="map"></div>
+    <div id="select-tiles">
+        <label><b>タイルの種類</b></label><br>
+        <select id="tiles">
+            <option value="gsi-digiele">デジタル標高地形図</option>
+            <option value="aist-seamless">シームレス地質図</option>
+        </select>
+    </div>
     <div id="select-geojson">
         <label><b>震央分布</b></label><br>
         <select id="geojson">
@@ -358,29 +366,8 @@
             // 産総研 シームレス標高タイルセット
             // map.setTerrain({ 'source': 'aist-dem', 'exaggeration': 1 });
 
-            /*
-            // 産総研 20万分の1日本シームレス地質図V2ソース
-            map.addSource("aist-seamless", {
-                type: 'raster',
-                tiles: [
-                    'https://gbank.gsj.jp/seamless/v2/api/1.3.1/tiles/{z}/{y}/{x}.png',
-                ],
-                attribution: '<a href="https://gbank.gsj.jp/seamless/v2/api/1.3.1/" target="_blank">産総研 20万分の1日本シームレス地質図V2</a>'
-            });
-
-            // 産総研 20万分の1日本シームレス地質図V2レイヤ
-            map.addLayer({
-                "id": "aist-seamless",
-                "type": "raster",
-                "source": "aist-seamless",
-                "paint": {
-                    "raster-opacity": 0.8
-                }
-            });
-            */
-
             // 新しいソースとレイヤーを追加する関数
-            function addEarthquakeLayer(date, url) {
+            function addEarthquakeLayer(date) {
                 // 気象庁 震央分布ソース
                 map.addSource(date, {
                     type: 'geojson',
@@ -487,7 +474,7 @@
 
         digielesliderOpactiy.addEventListener('input', (e) => {
             map.setPaintProperty(
-                'digiele',
+                'gsi-digiele',
                 'raster-opacity',
                 parseInt(e.target.value, 10) / 100
             );
@@ -538,6 +525,27 @@
                 updateLayerVisibility(selectedGeoJSON);
             });
         });
+
+        // イベントリスナーを追加
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('tiles').addEventListener('change', SelectTiles);
+        });
+
+        // タイル切り替え制御
+        function SelectTiles() {
+            // valueを取得
+            var currentLayerName = document.getElementById('tiles').value;
+
+            // レイヤの表示・非表示の切り替え
+            if (currentLayerName === 'gsi-digiele') {
+                map.setLayoutProperty('sgsi-digiele', 'visibility', 'visible');
+                map.setLayoutProperty('aist-seamless', 'visibility', 'none');
+            } else if (currentLayerName === 'aist-seamless') {
+                map.setLayoutProperty('sgsi-digiele', 'visibility', 'none');
+                map.setLayoutProperty('aist-seamless', 'visibility', 'visible');
+            }
+
+        };
 
     </script>
 </body>
