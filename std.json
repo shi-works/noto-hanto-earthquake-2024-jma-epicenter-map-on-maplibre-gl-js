@@ -41,7 +41,7 @@
 			"tiles": [
 				"pmtiles://https://xs489works.xsrv.jp/pmtiles-data/NIED/Z-V4-JAPAN-AMP-VS400_M250-SHAPE_ishikawa.pmtiles/{z}/{x}/{y}"
 			],
-			"attribution": "<a href='https://www.j-shis.bosai.go.jp/map/JSHIS2/download.html?lang=jp' target='_blank'>防災科研 表層地盤増幅率</a>"
+			"attribution": "<a href='https://www.j-shis.bosai.go.jp/map/JSHIS2/download.html?lang=jp' target='_blank'>防災科学技術研究所 表層地盤データ</a>"
 		},
 		"n-toyama": {
 			"type": "vector",
@@ -50,7 +50,7 @@
 			"tiles": [
 				"pmtiles://https://xs489works.xsrv.jp/pmtiles-data/NIED/Z-V4-JAPAN-AMP-VS400_M250-SHAPE_toyama.pmtiles/{z}/{x}/{y}"
 			],
-			"attribution": "<a href='https://www.j-shis.bosai.go.jp/map/JSHIS2/download.html?lang=jp' target='_blank'>防災科研 表層地盤増幅率</a>"
+			"attribution": "<a href='https://www.j-shis.bosai.go.jp/map/JSHIS2/download.html?lang=jp' target='_blank'>防災科学技術研究所 表層地盤データ</a>"
 		}
 	},
 	"layers": [
