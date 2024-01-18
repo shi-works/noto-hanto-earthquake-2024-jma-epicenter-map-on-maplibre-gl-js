@@ -22,7 +22,7 @@
         .map-overlay {
             font: bold 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
             position: absolute;
-            width: 220px;
+            width: 180px;
             bottom: 20px;
             left: 0;
             padding: 10px;
@@ -191,6 +191,19 @@
             height: auto;
         }
 
+        .legend-sstrct {
+            position: fixed;
+            right: 120px;
+            bottom: 50px;
+            z-index: 1;
+            width: auto;
+        }
+
+        .legend-sstrct img {
+            width: 100%;
+            height: auto;
+        }
+
         #select-tiles {
             padding: 3px 4px;
             font: 12px/14px Arial, Helvetica, sans-serif;
@@ -225,16 +238,14 @@
 
 <body>
     <div id="map"></div>
-    <!--
     <div id="select-tiles">
         <label><b>タイルの種類</b></label><br>
         <select id="tiles">
             <option value="gsi-digiele">地理院 デジタル標高地形図</option>
-            <option value="nied-sstrct">防災科研 表層地盤増幅率</option>
-            <option value="aist-seamless">シームレス地質図</option>
+            <option value="nied-sstrct">防災科研 表層地盤増幅率(揺れやすさ)</option>
+            <!--<option value="aist-seamless">シームレス地質図</option>-->
         </select>
     </div>
-    -->
     <div id="select-geojson">
         <label><b>震央分布</b></label><br>
         <select id="geojson">
@@ -261,7 +272,12 @@
     </div>
     <div id='legend-digiele' style="display:block;" class="legend-digiele">
         <div class="image-container">
-            <img src="legend.png" alt="Legend">
+            <img src="./img/legend.png" alt="Legend">
+        </div>
+    </div>
+    <div id='legend-sstrct' style="display:none;" class="legend-sstrct">
+        <div class="image-container">
+            <img src="./img/Z-V4-IDARV.png" alt="Legend">
         </div>
     </div>
     <div id='legend-depth' style="display:block;" class='legend-depth'>
@@ -292,7 +308,7 @@
     </div>
     <div class="map-overlay top">
         <div class="map-overlay-inner">
-            <label>デジタル標高地形図 不透明度: <span id="digiele-slider-opacity-value">100%</span></label>
+            <label>タイル 不透明度: <span id="digiele-slider-opacity-value">100%</span></label>
             <input id="digiele-slider-opacity" type="range" min="0" max="100" step="0" value="100">
         </div>
     </div>
@@ -356,6 +372,28 @@
             }), 'top-left'
         );
 
+        /*
+        // 表層地盤増幅率色分け用のフィルタ準備
+        let s1 = ["all", [">=", ['to-number', ["get", "ARV"]], 0], ["<", ['to-number', ["get", "ARV"]], 0.8]];
+        let s2 = ["all", [">=", ['to-number', ["get", "ARV"]], 0.8], ["<", ['to-number', ["get", "ARV"]], 1.0]];
+        let s3 = ["all", [">=", ['to-number', ["get", "ARV"]], 1.0], ["<", ['to-number', ["get", "ARV"]], 1.2]];
+        let s4 = ["all", [">=", ['to-number', ["get", "ARV"]], 1.2], ["<", ['to-number', ["get", "ARV"]], 1.4]];
+        let s5 = ["all", [">=", ['to-number', ["get", "ARV"]], 1.4], ["<", ['to-number', ["get", "ARV"]], 1.8]];
+        let s6 = ["all", [">=", ['to-number', ["get", "ARV"]], 1.8], ["<", ['to-number', ["get", "ARV"]], 2.3]];
+        let s7 = ["all", [">=", ['to-number', ["get", "ARV"]], 2.3]];
+
+        // 表層地盤増幅率色分け用色の準備
+        let s_colors = [
+            '#0041FF',
+            '#FAE696',
+            '#FEE500',
+            '#FF9900',
+            '#FF2800',
+            '#A50021',
+            '#B40068',
+        ]
+        */
+
         map.on('load', function () {
             // 産総研 シームレス標高タイルソース
             map.addSource("aist-dem", {
@@ -369,6 +407,40 @@
 
             // 産総研 シームレス標高タイルセット
             // map.setTerrain({ 'source': 'aist-dem', 'exaggeration': 1 });
+
+            /*
+            // 防災科研 表層地盤増幅率（石川県）ソース
+            map.addSource("nied-sstrct-ishikawa", {
+                type: "vector",
+                url: "pmtiles://https://xs489works.xsrv.jp/pmtiles-data/NIED/Z-V4-JAPAN-AMP-VS400_M250-SHAPE_ishikawa.pmtiles",
+                attribution: '<a href="https://www.j-shis.bosai.go.jp/map/JSHIS2/download.html?lang=jp" target="_blank">防災科研 表層地盤増幅率</a>',
+            });
+
+            // 防災科研 表層地盤増幅率（石川県）レイヤ
+            map.addLayer({
+                'id': 'nied-sstrct-ishikawa-fill',
+                'type': 'fill',
+                'source': 'nied-sstrct-ishikawa',
+                'source-layer': "ZV4JAPANAMPVS400_M250SHAPE_ishikawafgb",
+                'layout': {
+                    'visibility': 'visible'
+                },
+                'paint': {
+                    'fill-color': [
+                        "case",
+                        s1, s_colors[0],
+                        s2, s_colors[1],
+                        s3, s_colors[2],
+                        s4, s_colors[3],
+                        s5, s_colors[4],
+                        s6, s_colors[5],
+                        s7, s_colors[6],
+                        s_colors[6]
+                    ],
+                    'fill-opacity': 1
+                }
+            });
+            */
 
             // 新しいソースとレイヤーを追加する関数
             function addEarthquakeLayer(date) {
@@ -483,6 +555,16 @@
                 'raster-opacity',
                 parseInt(e.target.value, 10) / 100
             );
+            map.setPaintProperty(
+                'nied-sstrct-ishikawa-fill',
+                'fill-opacity',
+                parseInt(e.target.value, 10) / 100
+            );
+            map.setPaintProperty(
+                'nied-sstrct-toyama-fill',
+                'fill-opacity',
+                parseInt(e.target.value, 10) / 100
+            );
             digieleliderOpactiyValue.textContent = e.target.value + '%';
         });
 
@@ -537,22 +619,33 @@
             document.getElementById('tiles').addEventListener('change', SelectTiles);
         });
 
-        /*
         // タイル切り替え制御
         function SelectTiles() {
             // valueを取得
             var currentLayerName = document.getElementById('tiles').value;
-            var legend = document.getElementById('legend-digiele');
+            var legend_digiele = document.getElementById('legend-digiele');
+            var legend_sstrct = document.getElementById('legend-sstrct');
 
             // レイヤの表示・非表示の切り替え
             if (currentLayerName === 'gsi-digiele') {
                 map.setLayoutProperty('gsi-digiele', 'visibility', 'visible');
-                map.setLayoutProperty('aist-seamless', 'visibility', 'none');
-                legend.style.display = 'block';
-            } else if (currentLayerName === 'aist-seamless') {
+                // map.setLayoutProperty('aist-seamless', 'visibility', 'none');
+                map.setLayoutProperty('nied-sstrct-ishikawa-fill', 'visibility', 'none');
+                map.setLayoutProperty('nied-sstrct-toyama-fill', 'visibility', 'none');
+                legend_digiele.style.display = 'block';
+                legend_sstrct.style.display = 'none';
+            } else if (currentLayerName === 'nied-sstrct') {
+                map.setLayoutProperty('gsi-digiele', 'visibility', 'none');
+                // map.setLayoutProperty('aist-seamless', 'visibility', 'none');
+                map.setLayoutProperty('nied-sstrct-ishikawa-fill', 'visibility', 'visible');
+                map.setLayoutProperty('nied-sstrct-toyama-fill', 'visibility', 'visible');
+                legend_digiele.style.display = 'none';
+                legend_sstrct.style.display = 'block';
+            }
+            /*else if (currentLayerName === 'aist-seamless') {
                 map.setLayoutProperty('gsi-digiele', 'visibility', 'none');
                 map.setLayoutProperty('aist-seamless', 'visibility', 'visible');
-                legend.style.display = 'none';
+                legend_digiele.style.display = 'none';
 
                 // 凡例取得
                 if (map.getLayer('aist-seamless') && map.isSourceLoaded('s')) {
@@ -567,10 +660,9 @@
                     let apiUrl = `https://gbank.gsj.jp/seamless/v2/api/1.3.1/legend.html?box=${minLat},${minLon},${maxLat},${maxLon}`;
                     console.log(apiUrl);
                 }
-            }
+            }*/
 
         };
-        */
 
         /*
         // 凡例取得サービスで凡例を取得
