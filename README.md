@@ -15,7 +15,7 @@ https://shi-works.github.io/noto-hanto-earthquake-2024-jma-epicenter-map-on-mapl
 ### 国立研究開発法人 防災科学技術研究所
 - 表層地盤データ（表層地盤増幅率）
     - 出典：https://www.j-shis.bosai.go.jp/map/JSHIS2/download.html?lang=jp
-    - 概要：表層地盤増幅率とは地表から深さ30mまでの平均S波速度(AVS30)から算出される地盤増幅率（最大速度増幅率）の分布を示したものです（地表面近くに堆積した地層（表層地盤）の地震時の揺れの大きさを数値化したもので、地震に対する地盤の弱さを示す（信用）wikipedia））。
+    - 概要：表層地盤増幅率とは地表から深さ30mまでの平均S波速度(AVS30)から算出される地盤増幅率（最大速度増幅率）の分布を示したものです（地表面近くに堆積した地層（表層地盤）の地震時の揺れの大きさを数値化したもので、地震に対する地盤の弱さを示す（引用元：wikipedia））。
     - ライセンス：[J-SHIS利用規約](https://www.j-shis.bosai.go.jp/agreement)及び[地震動予測地図データの利用約款](https://www.j-shis.bosai.go.jp/map/JSHIS2/download.html?lang=jp)
 
 ### 背景地図及び地形データ
