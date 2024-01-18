@@ -102,7 +102,7 @@
             font: 12px/14px Arial, Helvetica, sans-serif;
         }
 
-        .legend {
+        .legend-depth {
             background-color: #fff;
             border-radius: 3px;
             bottom: 50px;
@@ -116,11 +116,11 @@
             height: 260px;
         }
 
-        .legend h4 {
+        .legend-depth h4 {
             margin: 0 0 10px;
         }
 
-        .legend div span {
+        .legend-depth div span {
             border-radius: 50%;
             display: inline-block;
             height: 15px;
@@ -173,7 +173,7 @@
             font-size: 12px;
         }
 
-        .legend-hanrei {
+        .legend-digiele {
             position: fixed;
             right: 10px;
             bottom: 340px;
@@ -186,7 +186,7 @@
             justify-content: flex-end;
         }
 
-        .legend-hanrei img {
+        .legend-digiele img {
             width: 50%;
             height: auto;
         }
@@ -225,13 +225,16 @@
 
 <body>
     <div id="map"></div>
+    <!--
     <div id="select-tiles">
         <label><b>タイルの種類</b></label><br>
         <select id="tiles">
-            <option value="gsi-digiele">デジタル標高地形図</option>
+            <option value="gsi-digiele">地理院 デジタル標高地形図</option>
+            <option value="nied-sstrct">防災科研 表層地盤増幅率</option>
             <option value="aist-seamless">シームレス地質図</option>
         </select>
     </div>
+    -->
     <div id="select-geojson">
         <label><b>震央分布</b></label><br>
         <select id="geojson">
@@ -253,14 +256,15 @@
             <option value="hypo20240115">2024年01月15日</option>
             <option value="hypo20240116">2024年01月16日</option>
             <option value="hypo20240117">2024年01月17日</option>
+            <option value="hypo20240118">2024年01月18日</option>
         </select>
     </div>
-    <div class="legend-hanrei">
+    <div id='legend-digiele' style="display:block;" class="legend-digiele">
         <div class="image-container">
             <img src="legend.png" alt="Legend">
         </div>
     </div>
-    <div id='legend' class='legend'>
+    <div id='legend-depth' style="display:block;" class='legend-depth'>
         <h4>震源深さ</h4>
         <div class="circle-depth" style='background-color: #FF0000;display: inline-block;'></div>
         <span style="display: inline-block; margin-left: 5px;">5km未満</span><br>
@@ -465,6 +469,7 @@
             addEarthquakeLayer('hypo20240115');
             addEarthquakeLayer('hypo20240116');
             addEarthquakeLayer('hypo20240117');
+            addEarthquakeLayer('hypo20240118');
 
         });
 
@@ -500,6 +505,7 @@
             'hypo20240115',
             'hypo20240116',
             'hypo20240117',
+            'hypo20240118',
         ];
 
         // GeoJSON表示切り替え関数
@@ -531,21 +537,59 @@
             document.getElementById('tiles').addEventListener('change', SelectTiles);
         });
 
+        /*
         // タイル切り替え制御
         function SelectTiles() {
             // valueを取得
             var currentLayerName = document.getElementById('tiles').value;
+            var legend = document.getElementById('legend-digiele');
 
             // レイヤの表示・非表示の切り替え
             if (currentLayerName === 'gsi-digiele') {
-                map.setLayoutProperty('sgsi-digiele', 'visibility', 'visible');
+                map.setLayoutProperty('gsi-digiele', 'visibility', 'visible');
                 map.setLayoutProperty('aist-seamless', 'visibility', 'none');
+                legend.style.display = 'block';
             } else if (currentLayerName === 'aist-seamless') {
-                map.setLayoutProperty('sgsi-digiele', 'visibility', 'none');
+                map.setLayoutProperty('gsi-digiele', 'visibility', 'none');
                 map.setLayoutProperty('aist-seamless', 'visibility', 'visible');
+                legend.style.display = 'none';
+
+                // 凡例取得
+                if (map.getLayer('aist-seamless') && map.isSourceLoaded('s')) {
+                    // 地質図のレイヤーが存在し、ロードされている場合に凡例を取得
+                    let bounds = map.getBounds();
+                    // 以下、凡例取得のためのコード
+                    let minLat = bounds.getSouth();
+                    let minLon = bounds.getWest();
+                    let maxLat = bounds.getNorth();
+                    let maxLon = bounds.getEast();
+
+                    let apiUrl = `https://gbank.gsj.jp/seamless/v2/api/1.3.1/legend.html?box=${minLat},${minLon},${maxLat},${maxLon}`;
+                    console.log(apiUrl);
+                }
             }
 
         };
+        */
+
+        /*
+        // 凡例取得サービスで凡例を取得
+        // https://gbank.gsj.jp/seamless/v2/api/1.3.1/#legend
+        map.on('moveend', function () {
+            if (map.getLayer('aist-seamless') && map.isSourceLoaded('s')) {
+                // 地質図のレイヤーが存在し、ロードされている場合に凡例を取得
+                let bounds = map.getBounds();
+                // 以下、凡例取得のためのコード
+                let minLat = bounds.getSouth();
+                let minLon = bounds.getWest();
+                let maxLat = bounds.getNorth();
+                let maxLon = bounds.getEast();
+
+                let apiUrl = `https://gbank.gsj.jp/seamless/v2/api/1.3.1/legend.html?box=${minLat},${minLon},${maxLat},${maxLon}`;
+                console.log(apiUrl);
+            }
+        });
+        */
 
     </script>
 </body>
