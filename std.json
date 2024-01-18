@@ -26,6 +26,31 @@
 				"https://cyberjapandata.gsi.go.jp/xyz/d1-no959/{z}/{x}/{y}.png"
 			],
 			"attribution": "<a href='https://maps.gsi.go.jp/development/ichiran.html#digiele' target='_blank'>地理院タイル(デジタル標高地形図【技術資料D1-No.959】)</a>"
+		},
+		"s": {
+			"type": "raster",
+			"tiles": [
+				"https://gbank.gsj.jp/seamless/v2/api/1.3.1/tiles/{z}/{y}/{x}.png"
+			],
+			"attribution": "<a href='https://gbank.gsj.jp/seamless/v2/api/1.3.1/' target='_blank'>産業技術総合研究所 20万分の1日本シームレス地質図V2</a>"
+		},
+		"n-ishikawa": {
+			"type": "vector",
+			"minzoom": 4,
+			"maxzoom": 10,
+			"tiles": [
+				"pmtiles://https://xs489works.xsrv.jp/pmtiles-data/NIED/Z-V4-JAPAN-AMP-VS400_M250-SHAPE_ishikawa.pmtiles/{z}/{x}/{y}"
+			],
+			"attribution": "<a href='https://www.j-shis.bosai.go.jp/map/JSHIS2/download.html?lang=jp' target='_blank'>防災科研 表層地盤増幅率</a>"
+		},
+		"n-toyama": {
+			"type": "vector",
+			"minzoom": 4,
+			"maxzoom": 10,
+			"tiles": [
+				"pmtiles://https://xs489works.xsrv.jp/pmtiles-data/NIED/Z-V4-JAPAN-AMP-VS400_M250-SHAPE_toyama.pmtiles/{z}/{x}/{y}"
+			],
+			"attribution": "<a href='https://www.j-shis.bosai.go.jp/map/JSHIS2/download.html?lang=jp' target='_blank'>防災科研 表層地盤増幅率</a>"
 		}
 	},
 	"layers": [
@@ -64,9 +89,396 @@
 			}
 		},
 		{
-			"id": "digiele",
+			"id": "gsi-digiele",
 			"type": "raster",
 			"source": "d",
+			"paint": {
+				"raster-opacity": 1
+			}
+		},
+		{
+			"id": "nied-sstrct-ishikawa-fill",
+			"type": "fill",
+			"source": "n-ishikawa",
+			"source-layer": "ZV4JAPANAMPVS400_M250SHAPE_ishikawafgb",
+			"layout": {
+				"visibility": "none"
+			},
+			"paint": {
+				"fill-color": [
+					"case",
+					[
+						"all",
+						[
+							">=",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							0
+						],
+						[
+							"<",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							0.8
+						]
+					],
+					"#0041FF",
+					[
+						"all",
+						[
+							">=",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							0.8
+						],
+						[
+							"<",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							1.0
+						]
+					],
+					"#FAE696",
+					[
+						"all",
+						[
+							">=",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							1.0
+						],
+						[
+							"<",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							1.2
+						]
+					],
+					"#FEE500",
+					[
+						"all",
+						[
+							">=",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							1.2
+						],
+						[
+							"<",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							1.4
+						]
+					],
+					"#FF9900",
+					[
+						"all",
+						[
+							">=",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							1.4
+						],
+						[
+							"<",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							1.8
+						]
+					],
+					"#FF2800",
+					[
+						"all",
+						[
+							">=",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							1.8
+						],
+						[
+							"<",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							2.3
+						]
+					],
+					"#A50021",
+					[
+						"all",
+						[
+							">=",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							2.3
+						]
+					],
+					"#B40068",
+					"#B40068"
+				],
+				"fill-outline-color": "rgba(0, 0, 0, 0)",
+				"fill-opacity": 1
+			}
+		},
+		{
+			"id": "nied-sstrct-toyama-fill",
+			"type": "fill",
+			"source": "n-toyama",
+			"source-layer": "ZV4JAPANAMPVS400_M250SHAPE_toyamafgb",
+			"layout": {
+				"visibility": "none"
+			},
+			"paint": {
+				"fill-color": [
+					"case",
+					[
+						"all",
+						[
+							">=",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							0
+						],
+						[
+							"<",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							0.8
+						]
+					],
+					"#0041FF",
+					[
+						"all",
+						[
+							">=",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							0.8
+						],
+						[
+							"<",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							1.0
+						]
+					],
+					"#FAE696",
+					[
+						"all",
+						[
+							">=",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							1.0
+						],
+						[
+							"<",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							1.2
+						]
+					],
+					"#FEE500",
+					[
+						"all",
+						[
+							">=",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							1.2
+						],
+						[
+							"<",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							1.4
+						]
+					],
+					"#FF9900",
+					[
+						"all",
+						[
+							">=",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							1.4
+						],
+						[
+							"<",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							1.8
+						]
+					],
+					"#FF2800",
+					[
+						"all",
+						[
+							">=",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							1.8
+						],
+						[
+							"<",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							2.3
+						]
+					],
+					"#A50021",
+					[
+						"all",
+						[
+							">=",
+							[
+								"to-number",
+								[
+									"get",
+									"ARV"
+								]
+							],
+							2.3
+						]
+					],
+					"#B40068",
+					"#B40068"
+				],
+				"fill-outline-color": "rgba(0, 0, 0, 0)",
+				"fill-opacity": 1
+			}
+		},
+		{
+			"id": "aist-seamless",
+			"type": "raster",
+			"source": "s",
+			"layout": {
+				"visibility": "none"
+			},
 			"paint": {
 				"raster-opacity": 1
 			}
