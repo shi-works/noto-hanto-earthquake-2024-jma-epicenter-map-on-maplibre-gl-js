@@ -4,7 +4,7 @@
 ## Public Website
 https://shi-works.github.io/noto-hanto-earthquake-2024-jma-epicenter-map-on-maplibre-gl-js/
 
-![image](https://github.com/shi-works/noto-hanto-earthquake-2024-jma-epicenter-map-on-maplibre-gl-js/assets/71203808/abf34d73-c0d2-41ae-94d9-c3d8aec400eb)
+![image](https://github.com/shi-works/noto-hanto-earthquake-2024-jma-epicenter-map-on-maplibre-gl-js/assets/71203808/a1e90500-af00-400b-b028-b43fdde63f03)
 
 ## Data Source
 ### 気象庁
