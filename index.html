@@ -20,14 +20,14 @@
         .map-overlay {
             font: bold 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
             position: absolute;
-            width: 180px;
-            top: 40px;
-            left: 50px;
+            width: 160px;
+            bottom: 20px;
+            left: 5px;
             padding: 10px;
         }
 
         .map-overlay .map-overlay-inner {
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.8);
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
             border-radius: 3px;
             padding: 10px;
@@ -101,7 +101,7 @@
         }
 
         .legend-depth {
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.8);
             border-radius: 3px;
             bottom: 50px;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.10);
@@ -202,27 +202,42 @@
             height: auto;
         }
 
-        #select-tiles {
-            padding: 3px 4px;
+        #info {
+            padding: 6px 8px;
             font: 12px/14px Arial, Helvetica, sans-serif;
-            color: black;
-            background: white;
-            background: rgba(255, 255, 255, 1.0);
+            color: navy;
+            background: rgba(255, 255, 255, 0.8);
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
             border-radius: 5px;
             width: fit-content;
             position: absolute;
             top: 5px;
-            left: 50px;
-            z-index: 10;
+            left: 45px;
+            z-index: 1;
+        }
+
+        .yubi {
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .checkbox-button-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            margin-right: 20px;
         }
 
         #select-geojson {
             padding: 3px 4px;
             font: 12px/14px Arial, Helvetica, sans-serif;
             color: black;
-            background: white;
-            background: rgba(255, 255, 255, 1.0);
+            background-color: rgba(255, 255, 255, 0.8);
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
             border-radius: 5px;
             width: fit-content;
@@ -236,13 +251,26 @@
 
 <body>
     <div id="map"></div>
-    <div id="select-tiles">
-        <label><b>タイルの種類</b></label><br>
-        <select id="tiles">
-            <option value="gsi-digiele">デジタル標高地形図</option>
-            <option value="nied-sstrct">表層地盤増幅率(揺れやすさ)</option>
-            <!--<option value="aist-seamless">シームレス地質図</option>-->
-        </select>
+    <div id="info">
+        <details>
+            <summary class="yubi">
+                <strong>レイヤー</strong>
+            </summary>
+            <fieldset>
+                <div class="checkbox-button-container">
+                    <div class="column">
+                        <div>
+                            <input type="checkbox" id="gsi-digiele" value="gsi-digiele" checked>
+                            <label for="gsi-digiele">デジタル標高地形図</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="nied-sstrct" value="nied-sstrct">
+                            <label for="nied-sstrct">表層地盤増幅率(揺れやすさ)</label>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </details>
     </div>
     <div id="select-geojson">
         <label><b>震央分布</b></label><br>
@@ -266,6 +294,12 @@
             <option value="hypo20240116">2024年01月16日</option>
             <option value="hypo20240117">2024年01月17日</option>
             <option value="hypo20240118">2024年01月18日</option>
+            <option value="hypo20240119">2024年01月19日</option>
+            <option value="hypo20240120">2024年01月20日</option>
+            <option value="hypo20240121">2024年01月21日</option>
+            <option value="hypo20240122">2024年01月22日</option>
+            <option value="hypo20240123">2024年01月23日</option>
+            <option value="hypo20240124">2024年01月24日</option>
         </select>
     </div>
     <div id='legend-digiele' style="display:block;" class="legend-digiele">
@@ -304,12 +338,14 @@
             <span class="circle-text" style="display: inline-block; margin-left: 5px;">M5</span><br>
         </div>
     </div>
+    <!--
     <div class="map-overlay top">
         <div class="map-overlay-inner">
             <label>タイル 不透明度: <span id="digiele-slider-opacity-value">100%</span></label>
             <input id="digiele-slider-opacity" type="range" min="0" max="100" step="0" value="100">
         </div>
     </div>
+    -->
     <script type="module">
         // Terrain-RGB形式への変換モジュール
         maplibregl.addProtocol('numpng', makeNumPngProtocol());
@@ -540,10 +576,16 @@
             addEarthquakeLayer('hypo20240116');
             addEarthquakeLayer('hypo20240117');
             addEarthquakeLayer('hypo20240118');
-
+            addEarthquakeLayer('hypo20240119');
+            addEarthquakeLayer('hypo20240120');
+            addEarthquakeLayer('hypo20240121');
+            addEarthquakeLayer('hypo20240122');
+            addEarthquakeLayer('hypo20240123');
+            addEarthquakeLayer('hypo20240124');
         });
 
-        // スライダーでデジタル標高地形図の不透明度を制御
+        /*
+        // スライダーでデジタル標高地形図・表層地盤増幅率の不透明度を制御
         const digielesliderOpactiy = document.getElementById('digiele-slider-opacity');
         const digieleliderOpactiyValue = document.getElementById('digiele-slider-opacity-value');
 
@@ -565,6 +607,7 @@
             );
             digieleliderOpactiyValue.textContent = e.target.value + '%';
         });
+        */
 
         // レイヤーのIDを配列として格納
         const layerIds = [
@@ -586,6 +629,12 @@
             'hypo20240116',
             'hypo20240117',
             'hypo20240118',
+            'hypo20240119',
+            'hypo20240120',
+            'hypo20240121',
+            'hypo20240122',
+            'hypo20240123',
+            'hypo20240124',
         ];
 
         // GeoJSON表示切り替え関数
@@ -612,74 +661,37 @@
             });
         });
 
-        // イベントリスナーを追加
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('tiles').addEventListener('change', SelectTiles);
+        // ============================== レイヤの表示・非表示切り替え制御 ==============================
+
+        // デジタル標高地形図の表示・非表示切り替え制御
+        document.getElementById('gsi-digiele').addEventListener('change', function (e) {
+            var legend_digiele = document.getElementById('legend-digiele');
+            if (e.target.checked) {
+                // チェックボックスがON - レイヤーを表示
+                map.setLayoutProperty('gsi-digiele', 'visibility', 'visible');
+                legend_digiele.style.display = 'block';
+            } else {
+                // チェックボックスがOFF - レイヤーを非表示
+                map.setLayoutProperty('gsi-digiele', 'visibility', 'none');
+                legend_digiele.style.display = 'none';
+            }
         });
 
-        // タイル切り替え制御
-        function SelectTiles() {
-            // valueを取得
-            var currentLayerName = document.getElementById('tiles').value;
-            var legend_digiele = document.getElementById('legend-digiele');
+        // 表層地盤増幅率(揺れやすさ)の表示・非表示切り替え制御
+        document.getElementById('nied-sstrct').addEventListener('change', function (e) {
             var legend_sstrct = document.getElementById('legend-sstrct');
-
-            // レイヤの表示・非表示の切り替え
-            if (currentLayerName === 'gsi-digiele') {
-                map.setLayoutProperty('gsi-digiele', 'visibility', 'visible');
-                // map.setLayoutProperty('aist-seamless', 'visibility', 'none');
-                map.setLayoutProperty('nied-sstrct-ishikawa-fill', 'visibility', 'none');
-                map.setLayoutProperty('nied-sstrct-toyama-fill', 'visibility', 'none');
-                legend_digiele.style.display = 'block';
-                legend_sstrct.style.display = 'none';
-            } else if (currentLayerName === 'nied-sstrct') {
-                map.setLayoutProperty('gsi-digiele', 'visibility', 'none');
-                // map.setLayoutProperty('aist-seamless', 'visibility', 'none');
+            if (e.target.checked) {
+                // チェックボックスがON - レイヤーを表示
                 map.setLayoutProperty('nied-sstrct-ishikawa-fill', 'visibility', 'visible');
                 map.setLayoutProperty('nied-sstrct-toyama-fill', 'visibility', 'visible');
-                legend_digiele.style.display = 'none';
                 legend_sstrct.style.display = 'block';
-            }
-            /*else if (currentLayerName === 'aist-seamless') {
-                map.setLayoutProperty('gsi-digiele', 'visibility', 'none');
-                map.setLayoutProperty('aist-seamless', 'visibility', 'visible');
-                legend_digiele.style.display = 'none';
-
-                // 凡例取得
-                if (map.getLayer('aist-seamless') && map.isSourceLoaded('s')) {
-                    // 地質図のレイヤーが存在し、ロードされている場合に凡例を取得
-                    let bounds = map.getBounds();
-                    // 以下、凡例取得のためのコード
-                    let minLat = bounds.getSouth();
-                    let minLon = bounds.getWest();
-                    let maxLat = bounds.getNorth();
-                    let maxLon = bounds.getEast();
-
-                    let apiUrl = `https://gbank.gsj.jp/seamless/v2/api/1.3.1/legend.html?box=${minLat},${minLon},${maxLat},${maxLon}`;
-                    console.log(apiUrl);
-                }
-            }*/
-
-        };
-
-        /*
-        // 凡例取得サービスで凡例を取得
-        // https://gbank.gsj.jp/seamless/v2/api/1.3.1/#legend
-        map.on('moveend', function () {
-            if (map.getLayer('aist-seamless') && map.isSourceLoaded('s')) {
-                // 地質図のレイヤーが存在し、ロードされている場合に凡例を取得
-                let bounds = map.getBounds();
-                // 以下、凡例取得のためのコード
-                let minLat = bounds.getSouth();
-                let minLon = bounds.getWest();
-                let maxLat = bounds.getNorth();
-                let maxLon = bounds.getEast();
-
-                let apiUrl = `https://gbank.gsj.jp/seamless/v2/api/1.3.1/legend.html?box=${minLat},${minLon},${maxLat},${maxLon}`;
-                console.log(apiUrl);
+            } else {
+                // チェックボックスがOFF - レイヤーを非表示
+                map.setLayoutProperty('nied-sstrct-ishikawa-fill', 'visibility', 'none');
+                map.setLayoutProperty('nied-sstrct-toyama-fill', 'visibility', 'none');
+                legend_sstrct.style.display = 'none';
             }
         });
-        */
 
     </script>
 </body>
