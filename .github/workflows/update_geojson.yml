@@ -35,7 +35,13 @@ jobs:
           curl -o data/hypo20240116.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240116.geojson
           curl -o data/hypo20240117.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240117.geojson
           curl -o data/hypo20240118.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240118.geojson
-          
+          curl -o data/hypo20240119.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240119.geojson
+          curl -o data/hypo20240120.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240120.geojson
+          curl -o data/hypo20240121.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240121.geojson
+          curl -o data/hypo20240122.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240122.geojson
+          curl -o data/hypo20240123.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240123.geojson
+          curl -o data/hypo20240124.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240124.geojson
+        
       - name: Commit and Push Changes
         run: |
           git config --global user.email "y.shiwaku.5519@gmail.com"
