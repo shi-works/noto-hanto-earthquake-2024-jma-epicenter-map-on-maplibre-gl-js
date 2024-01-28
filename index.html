@@ -300,6 +300,10 @@
             <option value="hypo20240122">2024年01月22日</option>
             <option value="hypo20240123">2024年01月23日</option>
             <option value="hypo20240124">2024年01月24日</option>
+            <option value="hypo20240125">2024年01月25日</option>
+            <option value="hypo20240126">2024年01月26日</option>
+            <option value="hypo20240127">2024年01月27日</option>
+            <option value="hypo20240128">2024年01月28日</option>
         </select>
     </div>
     <div id='legend-digiele' style="display:block;" class="legend-digiele">
@@ -358,7 +362,7 @@
         // マップの初期化
         const map = new maplibregl.Map({
             container: 'map',
-            style: 'std.json',
+            style: 'std2.json',
             center: [137.2495, 37.4826],
             zoom: 9.11,
             minZoom: 1,
@@ -582,6 +586,10 @@
             addEarthquakeLayer('hypo20240122');
             addEarthquakeLayer('hypo20240123');
             addEarthquakeLayer('hypo20240124');
+            addEarthquakeLayer('hypo20240125');
+            addEarthquakeLayer('hypo20240126');
+            addEarthquakeLayer('hypo20240127');
+            addEarthquakeLayer('hypo20240128');
         });
 
         /*
@@ -635,6 +643,10 @@
             'hypo20240122',
             'hypo20240123',
             'hypo20240124',
+            'hypo20240125',
+            'hypo20240126',
+            'hypo20240127',
+            'hypo20240128',
         ];
 
         // GeoJSON表示切り替え関数
@@ -682,13 +694,15 @@
             var legend_sstrct = document.getElementById('legend-sstrct');
             if (e.target.checked) {
                 // チェックボックスがON - レイヤーを表示
-                map.setLayoutProperty('nied-sstrct-ishikawa-fill', 'visibility', 'visible');
-                map.setLayoutProperty('nied-sstrct-toyama-fill', 'visibility', 'visible');
+                // map.setLayoutProperty('nied-sstrct-ishikawa-fill', 'visibility', 'visible');
+                // map.setLayoutProperty('nied-sstrct-toyama-fill', 'visibility', 'visible');
+                map.setLayoutProperty('nied-sstrct-japan-fill', 'visibility', 'visible');
                 legend_sstrct.style.display = 'block';
             } else {
                 // チェックボックスがOFF - レイヤーを非表示
-                map.setLayoutProperty('nied-sstrct-ishikawa-fill', 'visibility', 'none');
-                map.setLayoutProperty('nied-sstrct-toyama-fill', 'visibility', 'none');
+                // map.setLayoutProperty('nied-sstrct-ishikawa-fill', 'visibility', 'none');
+                // map.setLayoutProperty('nied-sstrct-toyama-fill', 'visibility', 'none');
+                map.setLayoutProperty('nied-sstrct-japan-fill', 'visibility', 'none');
                 legend_sstrct.style.display = 'none';
             }
         });
