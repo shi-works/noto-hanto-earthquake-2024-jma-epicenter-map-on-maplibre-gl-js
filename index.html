@@ -1,348 +1,366 @@
 <html>
+    <head>
+        <title>令和6年能登半島地震 震央分布マップ</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+        <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+        <script src="https://unpkg.com/pmtiles@2.11.0/dist/index.js"></script>
+        <style>
+            body {
+                margin: 0;
+            }
 
-<head>
-    <title>令和6年能登半島地震 震央分布マップ</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src='https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js'></script>
-    <link href='https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css' rel='stylesheet' />
-    <script src="https://unpkg.com/pmtiles@2.11.0/dist/index.js"></script>
-    <style>
-        body {
-            margin: 0;
-        }
+            #map {
+                height: 100%;
+                width: 100%;
+            }
 
-        #map {
-            height: 100%;
-            width: 100%;
-        }
+            .map-overlay {
+                font: bold 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+                position: absolute;
+                width: 160px;
+                bottom: 20px;
+                left: 5px;
+                padding: 10px;
+            }
 
-        .map-overlay {
-            font: bold 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
-            position: absolute;
-            width: 160px;
-            bottom: 20px;
-            left: 5px;
-            padding: 10px;
-        }
+            .map-overlay .map-overlay-inner {
+                background-color: rgba(255, 255, 255, 0.8);
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                border-radius: 3px;
+                padding: 10px;
+                margin-bottom: 10px;
+            }
 
-        .map-overlay .map-overlay-inner {
-            background-color: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-            border-radius: 3px;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
+            .map-overlay label {
+                display: block;
+                margin: 0 0 0px;
+                font-size: 12px;
+                top: 100px;
+                left: 10px;
+                display: block;
+                margin-bottom: 5px;
+            }
 
-        .map-overlay label {
-            display: block;
-            margin: 0 0 0px;
-            font-size: 12px;
-            top: 100px;
-            left: 10px;
-            display: block;
-            margin-bottom: 5px;
-        }
+            .map-overlay input {
+                background-color: transparent;
+                display: inline-block;
+                width: 100%;
+                position: relative;
+                margin: 0;
+                cursor: ew-resize;
+            }
 
-        .map-overlay input {
-            background-color: transparent;
-            display: inline-block;
-            width: 100%;
-            position: relative;
-            margin: 0;
-            cursor: ew-resize;
-        }
+            .maplibregl-popup .maplibregl-popup-content {
+                padding: 8px 10px;
+                font: 12px/14px Arial, Helvetica, sans-serif;
+                color: black;
+                background: rgba(255, 255, 255, 0.9);
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.9);
+                border-radius: 5px;
+                width: 220px;
+                height: 90px;
+                overflow: scroll;
+            }
 
-        .maplibregl-popup .maplibregl-popup-content {
-            padding: 8px 10px;
-            font: 12px/14px Arial, Helvetica, sans-serif;
-            color: black;
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.9);
-            border-radius: 5px;
-            width: 220px;
-            height: 90px;
-            overflow: scroll;
-        }
+            .maplibregl-popup .maplibregl-popup-content .shinouchimei-title {
+                color: red;
+                font-size: larger;
+            }
 
-        .maplibregl-popup .maplibregl-popup-content .shinouchimei-title {
-            color: red;
-            font-size: larger;
-        }
+            .maplibregl-popup .maplibregl-popup-content .quake-info th {
+                width: 100px;
+            }
 
-        .maplibregl-popup .maplibregl-popup-content .quake-info th {
-            width: 100px;
-        }
+            /* 1列目 (左側) を右寄せにする */
+            .maplibregl-popup .maplibregl-popup-content .quake-info td:nth-child(1) {
+                text-align: right;
+                width: 100px;
+                white-space: nowrap;
+                /* 折り返しを防ぐ */
+            }
 
-        /* 1列目 (左側) を右寄せにする */
-        .maplibregl-popup .maplibregl-popup-content .quake-info td:nth-child(1) {
-            text-align: right;
-            width: 100px;
-            white-space: nowrap;
-            /* 折り返しを防ぐ */
-        }
+            /* 2列目 (右側) のセルの幅を広げる */
+            .maplibregl-popup .maplibregl-popup-content .quake-info td:nth-child(2) {
+                text-align: left;
+                width: 150px;
+                white-space: nowrap;
+                /* 折り返しを防ぐ */
+            }
 
-        /* 2列目 (右側) のセルの幅を広げる */
-        .maplibregl-popup .maplibregl-popup-content .quake-info td:nth-child(2) {
-            text-align: left;
-            width: 150px;
-            white-space: nowrap;
-            /* 折り返しを防ぐ */
-        }
+            .maplibregl-popup .maplibregl-popup-content .quake-info b {
+                text-align: right;
+            }
 
-        .maplibregl-popup .maplibregl-popup-content .quake-info b {
-            text-align: right;
-        }
+            .maplibregl-popup .maplibregl-popup-content .quake-info,
+            .maplibregl-popup .maplibregl-popup-content .quake-info th,
+            .maplibregl-popup .maplibregl-popup-content .quake-info td {
+                font: 12px/14px Arial, Helvetica, sans-serif;
+            }
 
-        .maplibregl-popup .maplibregl-popup-content .quake-info,
-        .maplibregl-popup .maplibregl-popup-content .quake-info th,
-        .maplibregl-popup .maplibregl-popup-content .quake-info td {
-            font: 12px/14px Arial, Helvetica, sans-serif;
-        }
+            .legend-depth {
+                background-color: rgba(255, 255, 255, 0.8);
+                border-radius: 3px;
+                bottom: 50px;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+                font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+                padding: 10px;
+                position: absolute;
+                right: 10px;
+                z-index: 1;
+                line-height: 16px;
+                height: 260px;
+            }
 
-        .legend-depth {
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 3px;
-            bottom: 50px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.10);
-            font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
-            padding: 10px;
-            position: absolute;
-            right: 10px;
-            z-index: 1;
-            line-height: 16px;
-            height: 260px;
-        }
+            .legend-depth h4 {
+                margin: 0 0 10px;
+            }
 
-        .legend-depth h4 {
-            margin: 0 0 10px;
-        }
+            .legend-depth div span {
+                border-radius: 50%;
+                display: inline-block;
+                height: 15px;
+                margin-right: 10px;
+                width: 15px;
+                color: black;
+            }
 
-        .legend-depth div span {
-            border-radius: 50%;
-            display: inline-block;
-            height: 15px;
-            margin-right: 10px;
-            width: 15px;
-            color: black;
-        }
+            .circle-depth {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+            }
 
-        .circle-depth {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
+            .circle-container {
+                display: block;
+            }
 
-        .circle-container {
-            display: block;
-        }
+            .circle {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid red;
+                border-radius: 50%;
+                background-color: rgba(255, 0, 0, 0.2);
+            }
 
-        .circle {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid red;
-            border-radius: 50%;
-            background-color: rgba(255, 0, 0, 0.2);
-        }
+            .circle.small {
+                width: 8px;
+                height: 8px;
+            }
 
-        .circle.small {
-            width: 8px;
-            height: 8px;
-        }
+            .circle.medium {
+                width: 16px;
+                height: 16px;
+            }
 
-        .circle.medium {
-            width: 16px;
-            height: 16px;
-        }
+            .circle.large {
+                width: 40px;
+                height: 40px;
+            }
 
-        .circle.large {
-            width: 40px;
-            height: 40px;
-        }
+            .circle-text {
+                font-size: 12px;
+                position: relative;
+                color: black;
+            }
 
-        .circle-text {
-            font-size: 12px;
-            position: relative;
-            color: black;
-        }
+            .circle.large .circle-text {
+                font-size: 12px;
+            }
 
-        .circle.large .circle-text {
-            font-size: 12px;
-        }
+            .legend-digiele {
+                position: fixed;
+                right: 10px;
+                bottom: 340px;
+                z-index: 1;
+                width: auto;
+            }
 
-        .legend-digiele {
-            position: fixed;
-            right: 10px;
-            bottom: 340px;
-            z-index: 1;
-            width: auto;
-        }
+            .image-container {
+                display: flex;
+                justify-content: flex-end;
+            }
 
-        .image-container {
-            display: flex;
-            justify-content: flex-end;
-        }
+            .legend-digiele img {
+                width: 50%;
+                height: auto;
+            }
 
-        .legend-digiele img {
-            width: 50%;
-            height: auto;
-        }
+            .legend-sstrct {
+                position: fixed;
+                right: 120px;
+                bottom: 50px;
+                z-index: 1;
+                width: auto;
+            }
 
-        .legend-sstrct {
-            position: fixed;
-            right: 120px;
-            bottom: 50px;
-            z-index: 1;
-            width: auto;
-        }
+            .legend-sstrct img {
+                width: 90%;
+                height: auto;
+            }
 
-        .legend-sstrct img {
-            width: 90%;
-            height: auto;
-        }
+            #info {
+                padding: 6px 8px;
+                font: 12px/14px Arial, Helvetica, sans-serif;
+                color: navy;
+                background: rgba(255, 255, 255, 0.8);
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+                border-radius: 5px;
+                width: fit-content;
+                position: absolute;
+                top: 5px;
+                left: 45px;
+                z-index: 1;
+            }
 
-        #info {
-            padding: 6px 8px;
-            font: 12px/14px Arial, Helvetica, sans-serif;
-            color: navy;
-            background: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-            border-radius: 5px;
-            width: fit-content;
-            position: absolute;
-            top: 5px;
-            left: 45px;
-            z-index: 1;
-        }
+            .yubi {
+                cursor: pointer;
+                z-index: 1;
+            }
 
-        .yubi {
-            cursor: pointer;
-            z-index: 1;
-        }
+            .checkbox-button-container {
+                display: flex;
+                flex-direction: column;
+                justify-content: start;
+            }
 
-        .checkbox-button-container {
-            display: flex;
-            flex-direction: column;
-            justify-content: start;
-        }
+            .column {
+                display: flex;
+                flex-direction: column;
+                margin-right: 20px;
+            }
 
-        .column {
-            display: flex;
-            flex-direction: column;
-            margin-right: 20px;
-        }
+            #select-geojson {
+                padding: 3px 4px;
+                font: 12px/14px Arial, Helvetica, sans-serif;
+                color: black;
+                background-color: rgba(255, 255, 255, 0.8);
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+                border-radius: 5px;
+                width: fit-content;
+                position: absolute;
+                top: 5px;
+                right: 10px;
+                z-index: 10;
+            }
+        </style>
+    </head>
 
-        #select-geojson {
-            padding: 3px 4px;
-            font: 12px/14px Arial, Helvetica, sans-serif;
-            color: black;
-            background-color: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-            border-radius: 5px;
-            width: fit-content;
-            position: absolute;
-            top: 5px;
-            right: 10px;
-            z-index: 10;
-        }
-    </style>
-</head>
-
-<body>
-    <div id="map"></div>
-    <div id="info">
-        <details>
-            <summary class="yubi">
-                <strong>レイヤー</strong>
-            </summary>
-            <fieldset>
-                <div class="checkbox-button-container">
-                    <div class="column">
-                        <div>
-                            <input type="checkbox" id="gsi-digiele" value="gsi-digiele" checked>
-                            <label for="gsi-digiele">デジタル標高地形図</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="nied-sstrct" value="nied-sstrct">
-                            <label for="nied-sstrct">表層地盤増幅率(揺れやすさ)</label>
+    <body>
+        <div id="map"></div>
+        <div id="info">
+            <details>
+                <summary class="yubi">
+                    <strong>レイヤー</strong>
+                </summary>
+                <fieldset>
+                    <div class="checkbox-button-container">
+                        <div class="column">
+                            <div>
+                                <input type="checkbox" id="gsi-digiele" value="gsi-digiele" checked />
+                                <label for="gsi-digiele">デジタル標高地形図</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="nied-sstrct" value="nied-sstrct" />
+                                <label for="nied-sstrct">表層地盤増幅率(揺れやすさ)</label>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </fieldset>
-        </details>
-    </div>
-    <div id="select-geojson">
-        <label><b>震央分布</b></label><br>
-        <select id="geojson">
-            <option value="hypoall">全期間</option>
-            <option value="hypo20240101">2024年01月01日</option>
-            <option value="hypo20240102">2024年01月02日</option>
-            <option value="hypo20240103">2024年01月03日</option>
-            <option value="hypo20240104">2024年01月04日</option>
-            <option value="hypo20240105">2024年01月05日</option>
-            <option value="hypo20240106">2024年01月06日</option>
-            <option value="hypo20240107">2024年01月07日</option>
-            <option value="hypo20240108">2024年01月08日</option>
-            <option value="hypo20240109">2024年01月09日</option>
-            <option value="hypo20240110">2024年01月10日</option>
-            <option value="hypo20240111">2024年01月11日</option>
-            <option value="hypo20240112">2024年01月12日</option>
-            <option value="hypo20240113">2024年01月13日</option>
-            <option value="hypo20240114">2024年01月14日</option>
-            <option value="hypo20240115">2024年01月15日</option>
-            <option value="hypo20240116">2024年01月16日</option>
-            <option value="hypo20240117">2024年01月17日</option>
-            <option value="hypo20240118">2024年01月18日</option>
-            <option value="hypo20240119">2024年01月19日</option>
-            <option value="hypo20240120">2024年01月20日</option>
-            <option value="hypo20240121">2024年01月21日</option>
-            <option value="hypo20240122">2024年01月22日</option>
-            <option value="hypo20240123">2024年01月23日</option>
-            <option value="hypo20240124">2024年01月24日</option>
-            <option value="hypo20240125">2024年01月25日</option>
-            <option value="hypo20240126">2024年01月26日</option>
-            <option value="hypo20240127">2024年01月27日</option>
-            <option value="hypo20240128">2024年01月28日</option>
-        </select>
-    </div>
-    <div id='legend-digiele' style="display:block;" class="legend-digiele">
-        <div class="image-container">
-            <img src="./img/legend.png" alt="Legend">
+                </fieldset>
+            </details>
         </div>
-    </div>
-    <div id='legend-sstrct' style="display:none;" class="legend-sstrct">
-        <div class="image-container">
-            <img src="./img/Z-V4-IDARV.png" alt="Legend">
+        <div id="select-geojson">
+            <label><b>震央分布</b></label
+            ><br />
+            <select id="geojson">
+                <option value="hypoall">全期間</option>
+                <option value="hypo20240101">2024年01月01日</option>
+                <option value="hypo20240102">2024年01月02日</option>
+                <option value="hypo20240103">2024年01月03日</option>
+                <option value="hypo20240104">2024年01月04日</option>
+                <option value="hypo20240105">2024年01月05日</option>
+                <option value="hypo20240106">2024年01月06日</option>
+                <option value="hypo20240107">2024年01月07日</option>
+                <option value="hypo20240108">2024年01月08日</option>
+                <option value="hypo20240109">2024年01月09日</option>
+                <option value="hypo20240110">2024年01月10日</option>
+                <option value="hypo20240111">2024年01月11日</option>
+                <option value="hypo20240112">2024年01月12日</option>
+                <option value="hypo20240113">2024年01月13日</option>
+                <option value="hypo20240114">2024年01月14日</option>
+                <option value="hypo20240115">2024年01月15日</option>
+                <option value="hypo20240116">2024年01月16日</option>
+                <option value="hypo20240117">2024年01月17日</option>
+                <option value="hypo20240118">2024年01月18日</option>
+                <option value="hypo20240119">2024年01月19日</option>
+                <option value="hypo20240120">2024年01月20日</option>
+                <option value="hypo20240121">2024年01月21日</option>
+                <option value="hypo20240122">2024年01月22日</option>
+                <option value="hypo20240123">2024年01月23日</option>
+                <option value="hypo20240124">2024年01月24日</option>
+                <option value="hypo20240125">2024年01月25日</option>
+                <option value="hypo20240126">2024年01月26日</option>
+                <option value="hypo20240127">2024年01月27日</option>
+                <option value="hypo20240128">2024年01月28日</option>
+                <option value="hypo20240129">2024年01月29日</option>
+                <option value="hypo20240130">2024年01月30日</option>
+                <option value="hypo20240131">2024年01月31日</option>
+                <option value="hypo20240201">2024年02月01日</option>
+                <option value="hypo20240202">2024年02月02日</option>
+                <option value="hypo20240203">2024年02月03日</option>
+                <option value="hypo20240204">2024年02月04日</option>
+                <option value="hypo20240205">2024年02月05日</option>
+                <option value="hypo20240206">2024年02月06日</option>
+                <option value="hypo20240207">2024年02月07日</option>
+                <option value="hypo20240208">2024年02月08日</option>
+                <option value="hypo20240209">2024年02月09日</option>
+                <option value="hypo20240210">2024年02月10日</option>
+                <option value="hypo20240211">2024年02月11日</option>
+                <option value="hypo20240212">2024年02月12日</option>
+                <option value="hypo20240213">2024年02月13日</option>
+                <option value="hypo20240214">2024年02月14日</option>
+                <option value="hypo20240215">2024年02月15日</option>
+            </select>
         </div>
-    </div>
-    <div id='legend-depth' style="display:block;" class='legend-depth'>
-        <h4>震源深さ</h4>
-        <div class="circle-depth" style='background-color: #FF0000;display: inline-block;'></div>
-        <span style="display: inline-block; margin-left: 5px;">5km未満</span><br>
-        <div class="circle-depth" style='background-color: #FF7F00;display: inline-block;'></div>
-        <span style="display: inline-block; margin-left: 5px;">10km未満</span><br>
-        <div class="circle-depth" style='background-color: #FFFF00;display: inline-block;'></div>
-        <span style="display: inline-block; margin-left: 5px;">15km未満</span><br>
-        <div class="circle-depth" style='background-color: #00FF00;display: inline-block;'></div>
-        <span style="display: inline-block; margin-left: 5px;">20km未満</span><br>
-        <div class="circle-depth" style='background-color: #00FFFF;display: inline-block;'></div>
-        <span style="display: inline-block; margin-left: 5px;">30km未満</span><br>
-        <div class="circle-depth" style='background-color: #0000FF;display: inline-block;'></div>
-        <span style="display: inline-block; margin-left: 5px;">40km未満</span><br>
-        <div class="circle-depth" style='background-color: #7F00FF;display: inline-block;'></div>
-        <span style="display: inline-block; margin-left: 5px;">40km以上</span><br><br>
-        <h4>マグニチュード</h4>
-        <div class="circle-container">
-            <div class="circle small"></div>
-            <span class="circle-text" style="display: inline-block; margin-left: 5px;">M3</span><br>
-            <div class="circle medium"></div>
-            <span class="circle-text" style="display: inline-block; margin-left: 5px;">M4</span><br>
-            <div class="circle large"></div>
-            <span class="circle-text" style="display: inline-block; margin-left: 5px;">M5</span><br>
+        <div id="legend-digiele" style="display: block" class="legend-digiele">
+            <div class="image-container">
+                <img src="./img/legend.png" alt="Legend" />
+            </div>
         </div>
-    </div>
-    <!--
+        <div id="legend-sstrct" style="display: none" class="legend-sstrct">
+            <div class="image-container">
+                <img src="./img/Z-V4-IDARV.png" alt="Legend" />
+            </div>
+        </div>
+        <div id="legend-depth" style="display: block" class="legend-depth">
+            <h4>震源深さ</h4>
+            <div class="circle-depth" style="background-color: #ff0000; display: inline-block"></div>
+            <span style="display: inline-block; margin-left: 5px">5km未満</span><br />
+            <div class="circle-depth" style="background-color: #ff7f00; display: inline-block"></div>
+            <span style="display: inline-block; margin-left: 5px">10km未満</span><br />
+            <div class="circle-depth" style="background-color: #ffff00; display: inline-block"></div>
+            <span style="display: inline-block; margin-left: 5px">15km未満</span><br />
+            <div class="circle-depth" style="background-color: #00ff00; display: inline-block"></div>
+            <span style="display: inline-block; margin-left: 5px">20km未満</span><br />
+            <div class="circle-depth" style="background-color: #00ffff; display: inline-block"></div>
+            <span style="display: inline-block; margin-left: 5px">30km未満</span><br />
+            <div class="circle-depth" style="background-color: #0000ff; display: inline-block"></div>
+            <span style="display: inline-block; margin-left: 5px">40km未満</span><br />
+            <div class="circle-depth" style="background-color: #7f00ff; display: inline-block"></div>
+            <span style="display: inline-block; margin-left: 5px">40km以上</span><br /><br />
+            <h4>マグニチュード</h4>
+            <div class="circle-container">
+                <div class="circle small"></div>
+                <span class="circle-text" style="display: inline-block; margin-left: 5px">M3</span><br />
+                <div class="circle medium"></div>
+                <span class="circle-text" style="display: inline-block; margin-left: 5px">M4</span><br />
+                <div class="circle large"></div>
+                <span class="circle-text" style="display: inline-block; margin-left: 5px">M5</span><br />
+            </div>
+        </div>
+        <!--
     <div class="map-overlay top">
         <div class="map-overlay-inner">
             <label>タイル 不透明度: <span id="digiele-slider-opacity-value">100%</span></label>
@@ -350,67 +368,75 @@
         </div>
     </div>
     -->
-    <script type="module">
-        // Terrain-RGB形式への変換モジュール
-        maplibregl.addProtocol('numpng', makeNumPngProtocol());
-        import { makeNumPngProtocol } from './numPngProtocol.js'
+        <script type="module">
+            // Terrain-RGB形式への変換モジュール
+            maplibregl.addProtocol('numpng', makeNumPngProtocol());
+            import { makeNumPngProtocol } from './numPngProtocol.js';
 
-        // addProtocolの設定
-        let protocol = new pmtiles.Protocol();
-        maplibregl.addProtocol("pmtiles", protocol.tile);
+            // addProtocolの設定
+            let protocol = new pmtiles.Protocol();
+            maplibregl.addProtocol('pmtiles', protocol.tile);
 
-        // マップの初期化
-        const map = new maplibregl.Map({
-            container: 'map',
-            style: 'std2.json',
-            center: [137.2495, 37.4826],
-            zoom: 9.11,
-            minZoom: 1,
-            maxZoom: 14.5,
-            pitch: 0,
-            maxPitch: 85,
-            bearing: 0,
-            hash: true,
-            attributionControl: false
-        });
+            // マップの初期化
+            const map = new maplibregl.Map({
+                container: 'map',
+                style: 'std2.json',
+                center: [137.2495, 37.4826],
+                zoom: 9.11,
+                minZoom: 1,
+                maxZoom: 14.5,
+                pitch: 0,
+                maxPitch: 85,
+                bearing: 0,
+                hash: true,
+                attributionControl: false,
+            });
 
-        // ズーム・回転
-        map.addControl(new maplibregl.NavigationControl(), 'top-left');
+            // ズーム・回転
+            map.addControl(new maplibregl.NavigationControl(), 'top-left');
 
-        // フルスクリーンモードのオンオフ
-        map.addControl(new maplibregl.FullscreenControl(), 'top-left');
+            // フルスクリーンモードのオンオフ
+            map.addControl(new maplibregl.FullscreenControl(), 'top-left');
 
-        // 現在位置表示
-        map.addControl(new maplibregl.GeolocateControl({
-            positionOptions: {
-                enableHighAccuracy: false
-            },
-            fitBoundsOptions: { maxZoom: 18 },
-            trackUserLocation: true,
-            showUserLocation: true
-        }), 'top-left');
+            // 現在位置表示
+            map.addControl(
+                new maplibregl.GeolocateControl({
+                    positionOptions: {
+                        enableHighAccuracy: false,
+                    },
+                    fitBoundsOptions: { maxZoom: 18 },
+                    trackUserLocation: true,
+                    showUserLocation: true,
+                }),
+                'top-left'
+            );
 
-        // スケール表示
-        map.addControl(new maplibregl.ScaleControl({
-            maxWidth: 200,
-            unit: 'metric'
-        }));
+            // スケール表示
+            map.addControl(
+                new maplibregl.ScaleControl({
+                    maxWidth: 200,
+                    unit: 'metric',
+                })
+            );
 
-        // Attributionを折りたたみ表示
-        map.addControl(new maplibregl.AttributionControl({
-            compact: true,
-            customAttribution: '（<a href="https://twitter.com/shi__works" target="_blank">Twitter</a> | <a href="https://github.com/shi-works/noto-hanto-earthquake-2024-jma-epicenter-map-on-maplibre-gl-js" target="_blank">Github</a>）'
-        }));
+            // Attributionを折りたたみ表示
+            map.addControl(
+                new maplibregl.AttributionControl({
+                    compact: true,
+                    customAttribution: '（<a href="https://twitter.com/shi__works" target="_blank">Twitter</a> | <a href="https://github.com/shi-works/noto-hanto-earthquake-2024-jma-epicenter-map-on-maplibre-gl-js" target="_blank">Github</a>）',
+                })
+            );
 
-        // 3D地形コントロール
-        map.addControl(
-            new maplibregl.TerrainControl({
-                source: 'aist-dem',
-                exaggeration: 1 // 標高を強調する倍率
-            }), 'top-left'
-        );
+            // 3D地形コントロール
+            map.addControl(
+                new maplibregl.TerrainControl({
+                    source: 'aist-dem',
+                    exaggeration: 1, // 標高を強調する倍率
+                }),
+                'top-left'
+            );
 
-        /*
+            /*
         // 表層地盤増幅率色分け用のフィルタ準備
         let s1 = ["all", [">=", ['to-number', ["get", "ARV"]], 0], ["<", ['to-number', ["get", "ARV"]], 0.8]];
         let s2 = ["all", [">=", ['to-number', ["get", "ARV"]], 0.8], ["<", ['to-number', ["get", "ARV"]], 1.0]];
@@ -432,21 +458,19 @@
         ]
         */
 
-        map.on('load', function () {
-            // 産総研 シームレス標高タイルソース
-            map.addSource("aist-dem", {
-                type: 'raster-dem',
-                tiles: [
-                    'numpng://tiles.gsj.jp/tiles/elev/mixed/{z}/{y}/{x}.png',
-                ],
-                attribution: '<a href="https://tiles.gsj.jp/tiles/elev/tiles.html" target="_blank">産業技術総合研究所 シームレス標高タイル(統合DEM)</a>',
-                tileSize: 256
-            });
+            map.on('load', function () {
+                // 産総研 シームレス標高タイルソース
+                map.addSource('aist-dem', {
+                    type: 'raster-dem',
+                    tiles: ['numpng://tiles.gsj.jp/tiles/elev/mixed/{z}/{y}/{x}.png'],
+                    attribution: '<a href="https://tiles.gsj.jp/tiles/elev/tiles.html" target="_blank">産業技術総合研究所 シームレス標高タイル(統合DEM)</a>',
+                    tileSize: 256,
+                });
 
-            // 産総研 シームレス標高タイルセット
-            // map.setTerrain({ 'source': 'aist-dem', 'exaggeration': 1 });
+                // 産総研 シームレス標高タイルセット
+                // map.setTerrain({ 'source': 'aist-dem', 'exaggeration': 1 });
 
-            /*
+                /*
             // 防災科研 表層地盤増幅率（石川県）ソース
             map.addSource("nied-sstrct-ishikawa", {
                 type: "vector",
@@ -480,119 +504,110 @@
             });
             */
 
-            // 新しいソースとレイヤーを追加する関数
-            function addEarthquakeLayer(date) {
-                // 気象庁 震央分布ソース
-                map.addSource(date, {
-                    type: 'geojson',
-                    data: 'https://shi-works.github.io/noto-hanto-earthquake-2024-jma-epicenter-map-on-maplibre-gl-js/data/' + date + '.geojson'
-                });
+                // 新しいソースとレイヤーを追加する関数
+                function addEarthquakeLayer(date) {
+                    // 気象庁 震央分布ソース
+                    map.addSource(date, {
+                        type: 'geojson',
+                        data: 'https://shi-works.github.io/noto-hanto-earthquake-2024-jma-epicenter-map-on-maplibre-gl-js/data/' + date + '.geojson',
+                    });
 
-                // 気象庁 震央分布レイヤ
-                map.addLayer({
-                    'id': date,
-                    'type': 'circle',
-                    'source': date,
-                    minzoom: 1,
-                    maxzoom: 23,
-                    'paint': {
-                        'circle-stroke-color': "#000000",
-                        'circle-stroke-width': 1.5,
-                        'circle-color': [
-                            "step",
-                            ["to-number", ["get", "dep"]],
-                            "rgba(255, 0, 0, 0.7)",         // 5km未満
-                            5, "rgba(255, 127, 0, 0.7)",   // 10km未満
-                            10, "rgba(255, 255, 0, 0.7)",   // 15km未満
-                            15, "rgba(0, 255, 0, 0.7)",     // 20km未満
-                            20, "rgba(0, 255, 255, 0.7)",  // 30km未満
-                            30, "rgba(0, 0, 255, 0.7)",    // 40km未満
-                            40, "rgba(127, 0, 255, 0.7)",  // 40km以上
-                        ],
-                        'circle-radius': [
-                            "interpolate",
-                            ["linear"],
-                            ["to-number", ["get", "mag"]],
-                            1, 2,
-                            3, 4,
-                            4, 8,
-                            5, 20,
-                            6, 40,
-                            7, 60,
-                            8, 80,
-                            9, 100
-                        ]
-                    }
-                });
+                    // 気象庁 震央分布レイヤ
+                    map.addLayer({
+                        id: date,
+                        type: 'circle',
+                        source: date,
+                        minzoom: 1,
+                        maxzoom: 23,
+                        paint: {
+                            'circle-stroke-color': '#000000',
+                            'circle-stroke-width': 1.5,
+                            'circle-color': [
+                                'step',
+                                ['to-number', ['get', 'dep']],
+                                'rgba(255, 0, 0, 0.7)', // 5km未満
+                                5,
+                                'rgba(255, 127, 0, 0.7)', // 10km未満
+                                10,
+                                'rgba(255, 255, 0, 0.7)', // 15km未満
+                                15,
+                                'rgba(0, 255, 0, 0.7)', // 20km未満
+                                20,
+                                'rgba(0, 255, 255, 0.7)', // 30km未満
+                                30,
+                                'rgba(0, 0, 255, 0.7)', // 40km未満
+                                40,
+                                'rgba(127, 0, 255, 0.7)', // 40km以上
+                            ],
+                            'circle-radius': ['interpolate', ['linear'], ['to-number', ['get', 'mag']], 1, 2, 3, 4, 4, 8, 5, 20, 6, 40, 7, 60, 8, 80, 9, 100],
+                        },
+                    });
 
-                // クリック時のポップアップ表示
-                map.on('click', date, (e) => {
-                    var lng = e.features[0].geometry.coordinates[0];
-                    var lat = e.features[0].geometry.coordinates[1];
-                    var date = e.features[0].properties['date'];
-                    var dep = e.features[0].properties['dep'];
-                    var mag = e.features[0].properties['mag'];
+                    // クリック時のポップアップ表示
+                    map.on('click', date, (e) => {
+                        var lng = e.features[0].geometry.coordinates[0];
+                        var lat = e.features[0].geometry.coordinates[1];
+                        var date = e.features[0].properties['date'];
+                        var dep = e.features[0].properties['dep'];
+                        var mag = e.features[0].properties['mag'];
 
-                    new maplibregl.Popup()
-                        .setLngLat(e.lngLat)
-                        .setHTML(
-                            '<table class="quake-info">' +
-                            '<tr>' +
-                            '<th></th>' +
-                            '<th></th>' +
-                            '</tr>' +
-                            '<tr>' +
-                            '<td>発生日時：</td>' +
-                            '<td><b>' + date + '</b></td>' +
-                            '</tr>' +
-                            '<tr>' +
-                            '<td>深さ：</td>' +
-                            '<td><b>' + dep + ' km' + '</b></td>' +
-                            '</tr>' +
-                            '<tr>' +
-                            '<td>M：</td>' +
-                            '<td><b>' + mag + '</b></td>' +
-                            '</tr>' +
-                            '</table>' +
-                            '<a href="https://www.google.com/maps?q=' + lat + "," + lng + "&hl=ja" + '" target="_blank" class="google-maps-link">🌎Google Maps</a>'
-                        )
-                        .addTo(map);
-                });
+                        new maplibregl.Popup()
+                            .setLngLat(e.lngLat)
+                            .setHTML('<table class="quake-info">' + '<tr>' + '<th></th>' + '<th></th>' + '</tr>' + '<tr>' + '<td>発生日時：</td>' + '<td><b>' + date + '</b></td>' + '</tr>' + '<tr>' + '<td>深さ：</td>' + '<td><b>' + dep + ' km' + '</b></td>' + '</tr>' + '<tr>' + '<td>M：</td>' + '<td><b>' + mag + '</b></td>' + '</tr>' + '</table>' + '<a href="https://www.google.com/maps?q=' + lat + ',' + lng + '&hl=ja' + '" target="_blank" class="google-maps-link">🌎Google Maps</a>')
+                            .addTo(map);
+                    });
+                }
 
-            }
+                // 新しいソースとレイヤーを追加
+                addEarthquakeLayer('hypo20240101');
+                addEarthquakeLayer('hypo20240102');
+                addEarthquakeLayer('hypo20240103');
+                addEarthquakeLayer('hypo20240104');
+                addEarthquakeLayer('hypo20240105');
+                addEarthquakeLayer('hypo20240106');
+                addEarthquakeLayer('hypo20240107');
+                addEarthquakeLayer('hypo20240108');
+                addEarthquakeLayer('hypo20240109');
+                addEarthquakeLayer('hypo20240110');
+                addEarthquakeLayer('hypo20240111');
+                addEarthquakeLayer('hypo20240112');
+                addEarthquakeLayer('hypo20240113');
+                addEarthquakeLayer('hypo20240114');
+                addEarthquakeLayer('hypo20240115');
+                addEarthquakeLayer('hypo20240116');
+                addEarthquakeLayer('hypo20240117');
+                addEarthquakeLayer('hypo20240118');
+                addEarthquakeLayer('hypo20240119');
+                addEarthquakeLayer('hypo20240120');
+                addEarthquakeLayer('hypo20240121');
+                addEarthquakeLayer('hypo20240122');
+                addEarthquakeLayer('hypo20240123');
+                addEarthquakeLayer('hypo20240124');
+                addEarthquakeLayer('hypo20240125');
+                addEarthquakeLayer('hypo20240126');
+                addEarthquakeLayer('hypo20240127');
+                addEarthquakeLayer('hypo20240128');
+                addEarthquakeLayer('hypo20240129');
+                addEarthquakeLayer('hypo20240130');
+                addEarthquakeLayer('hypo20240131');
+                addEarthquakeLayer('hypo20240201');
+                addEarthquakeLayer('hypo20240202');
+                addEarthquakeLayer('hypo20240203');
+                addEarthquakeLayer('hypo20240204');
+                addEarthquakeLayer('hypo20240205');
+                addEarthquakeLayer('hypo20240206');
+                addEarthquakeLayer('hypo20240207');
+                addEarthquakeLayer('hypo20240208');
+                addEarthquakeLayer('hypo20240209');
+                addEarthquakeLayer('hypo20240210');
+                addEarthquakeLayer('hypo20240211');
+                addEarthquakeLayer('hypo20240212');
+                addEarthquakeLayer('hypo20240213');
+                addEarthquakeLayer('hypo20240214');
+                addEarthquakeLayer('hypo20240215');
+            });
 
-            // 新しいソースとレイヤーを追加
-            addEarthquakeLayer('hypo20240101');
-            addEarthquakeLayer('hypo20240102');
-            addEarthquakeLayer('hypo20240103');
-            addEarthquakeLayer('hypo20240104');
-            addEarthquakeLayer('hypo20240105');
-            addEarthquakeLayer('hypo20240106');
-            addEarthquakeLayer('hypo20240107');
-            addEarthquakeLayer('hypo20240108');
-            addEarthquakeLayer('hypo20240109');
-            addEarthquakeLayer('hypo20240110');
-            addEarthquakeLayer('hypo20240111');
-            addEarthquakeLayer('hypo20240112');
-            addEarthquakeLayer('hypo20240113');
-            addEarthquakeLayer('hypo20240114');
-            addEarthquakeLayer('hypo20240115');
-            addEarthquakeLayer('hypo20240116');
-            addEarthquakeLayer('hypo20240117');
-            addEarthquakeLayer('hypo20240118');
-            addEarthquakeLayer('hypo20240119');
-            addEarthquakeLayer('hypo20240120');
-            addEarthquakeLayer('hypo20240121');
-            addEarthquakeLayer('hypo20240122');
-            addEarthquakeLayer('hypo20240123');
-            addEarthquakeLayer('hypo20240124');
-            addEarthquakeLayer('hypo20240125');
-            addEarthquakeLayer('hypo20240126');
-            addEarthquakeLayer('hypo20240127');
-            addEarthquakeLayer('hypo20240128');
-        });
-
-        /*
+            /*
         // スライダーでデジタル標高地形図・表層地盤増幅率の不透明度を制御
         const digielesliderOpactiy = document.getElementById('digiele-slider-opacity');
         const digieleliderOpactiyValue = document.getElementById('digiele-slider-opacity-value');
@@ -617,97 +632,66 @@
         });
         */
 
-        // レイヤーのIDを配列として格納
-        const layerIds = [
-            'hypo20240101',
-            'hypo20240102',
-            'hypo20240103',
-            'hypo20240104',
-            'hypo20240105',
-            'hypo20240106',
-            'hypo20240107',
-            'hypo20240108',
-            'hypo20240109',
-            'hypo20240110',
-            'hypo20240111',
-            'hypo20240112',
-            'hypo20240113',
-            'hypo20240114',
-            'hypo20240115',
-            'hypo20240116',
-            'hypo20240117',
-            'hypo20240118',
-            'hypo20240119',
-            'hypo20240120',
-            'hypo20240121',
-            'hypo20240122',
-            'hypo20240123',
-            'hypo20240124',
-            'hypo20240125',
-            'hypo20240126',
-            'hypo20240127',
-            'hypo20240128',
-        ];
+            // レイヤーのIDを配列として格納
+            const layerIds = ['hypo20240101', 'hypo20240102', 'hypo20240103', 'hypo20240104', 'hypo20240105', 'hypo20240106', 'hypo20240107', 'hypo20240108', 'hypo20240109', 'hypo20240110', 'hypo20240111', 'hypo20240112', 'hypo20240113', 'hypo20240114', 'hypo20240115', 'hypo20240116', 'hypo20240117', 'hypo20240118', 'hypo20240119', 'hypo20240120', 'hypo20240121', 'hypo20240122', 'hypo20240123', 'hypo20240124', 'hypo20240125', 'hypo20240126', 'hypo20240127', 'hypo20240128', 'hypo20240129', 'hypo20240130', 'hypo20240131', 'hypo20240201', 'hypo20240202', 'hypo20240203', 'hypo20240204', 'hypo20240205', 'hypo20240206', 'hypo20240207', 'hypo20240208', 'hypo20240209', 'hypo20240210', 'hypo20240211', 'hypo20240212', 'hypo20240213', 'hypo20240214', 'hypo20240215'];
 
-        // GeoJSON表示切り替え関数
-        function updateLayerVisibility(selectedGeoJSON) {
-            if (selectedGeoJSON === 'hypoall') {
-                // 'hypoall' が選択された場合、全てのレイヤーを表示
-                layerIds.forEach(layerId => {
-                    map.setLayoutProperty(layerId, 'visibility', 'visible');
-                });
-            } else {
-                // それ以外の場合は、選択されたレイヤーのみ表示
-                layerIds.forEach(layerId => {
-                    const visibility = (layerId === selectedGeoJSON) ? 'visible' : 'none';
-                    map.setLayoutProperty(layerId, 'visibility', visibility);
-                });
+            // GeoJSON表示切り替え関数
+            function updateLayerVisibility(selectedGeoJSON) {
+                if (selectedGeoJSON === 'hypoall') {
+                    // 'hypoall' が選択された場合、全てのレイヤーを表示
+                    layerIds.forEach((layerId) => {
+                        map.setLayoutProperty(layerId, 'visibility', 'visible');
+                    });
+                } else {
+                    // それ以外の場合は、選択されたレイヤーのみ表示
+                    layerIds.forEach((layerId) => {
+                        const visibility = layerId === selectedGeoJSON ? 'visible' : 'none';
+                        map.setLayoutProperty(layerId, 'visibility', visibility);
+                    });
+                }
             }
-        }
 
-        // イベントリスナー内で関数を呼び出し
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('geojson').addEventListener('change', function () {
-                const selectedGeoJSON = this.value;
-                updateLayerVisibility(selectedGeoJSON);
+            // イベントリスナー内で関数を呼び出し
+            document.addEventListener('DOMContentLoaded', () => {
+                document.getElementById('geojson').addEventListener('change', function () {
+                    const selectedGeoJSON = this.value;
+                    updateLayerVisibility(selectedGeoJSON);
+                });
             });
-        });
 
-        // ============================== レイヤの表示・非表示切り替え制御 ==============================
+            // ============================== レイヤの表示・非表示切り替え制御 ==============================
 
-        // デジタル標高地形図の表示・非表示切り替え制御
-        document.getElementById('gsi-digiele').addEventListener('change', function (e) {
-            var legend_digiele = document.getElementById('legend-digiele');
-            if (e.target.checked) {
-                // チェックボックスがON - レイヤーを表示
-                map.setLayoutProperty('gsi-digiele', 'visibility', 'visible');
-                legend_digiele.style.display = 'block';
-            } else {
-                // チェックボックスがOFF - レイヤーを非表示
-                map.setLayoutProperty('gsi-digiele', 'visibility', 'none');
-                legend_digiele.style.display = 'none';
-            }
-        });
+            // デジタル標高地形図の表示・非表示切り替え制御
+            document.getElementById('gsi-digiele').addEventListener('change', function (e) {
+                var legend_digiele = document.getElementById('legend-digiele');
+                if (e.target.checked) {
+                    // チェックボックスがON - レイヤーを表示
+                    map.setLayoutProperty('gsi-digiele', 'visibility', 'visible');
+                    legend_digiele.style.display = 'block';
+                } else {
+                    // チェックボックスがOFF - レイヤーを非表示
+                    map.setLayoutProperty('gsi-digiele', 'visibility', 'none');
+                    legend_digiele.style.display = 'none';
+                }
+            });
 
-        // 表層地盤増幅率(揺れやすさ)の表示・非表示切り替え制御
-        document.getElementById('nied-sstrct').addEventListener('change', function (e) {
-            var legend_sstrct = document.getElementById('legend-sstrct');
-            if (e.target.checked) {
-                // チェックボックスがON - レイヤーを表示
-                // map.setLayoutProperty('nied-sstrct-ishikawa-fill', 'visibility', 'visible');
-                // map.setLayoutProperty('nied-sstrct-toyama-fill', 'visibility', 'visible');
-                map.setLayoutProperty('nied-sstrct-japan-fill', 'visibility', 'visible');
-                legend_sstrct.style.display = 'block';
-            } else {
-                // チェックボックスがOFF - レイヤーを非表示
-                // map.setLayoutProperty('nied-sstrct-ishikawa-fill', 'visibility', 'none');
-                // map.setLayoutProperty('nied-sstrct-toyama-fill', 'visibility', 'none');
-                map.setLayoutProperty('nied-sstrct-japan-fill', 'visibility', 'none');
-                legend_sstrct.style.display = 'none';
-            }
-        });
-
-    </script>
-</body>
-
+            // 表層地盤増幅率(揺れやすさ)の表示・非表示切り替え制御
+            document.getElementById('nied-sstrct').addEventListener('change', function (e) {
+                var legend_sstrct = document.getElementById('legend-sstrct');
+                if (e.target.checked) {
+                    // チェックボックスがON - レイヤーを表示
+                    // map.setLayoutProperty('nied-sstrct-ishikawa-fill', 'visibility', 'visible');
+                    // map.setLayoutProperty('nied-sstrct-toyama-fill', 'visibility', 'visible');
+                    map.setLayoutProperty('nied-sstrct-japan-fill', 'visibility', 'visible');
+                    legend_sstrct.style.display = 'block';
+                } else {
+                    // チェックボックスがOFF - レイヤーを非表示
+                    // map.setLayoutProperty('nied-sstrct-ishikawa-fill', 'visibility', 'none');
+                    // map.setLayoutProperty('nied-sstrct-toyama-fill', 'visibility', 'none');
+                    map.setLayoutProperty('nied-sstrct-japan-fill', 'visibility', 'none');
+                    legend_sstrct.style.display = 'none';
+                }
+            });
+        </script>
+    </body>
 </html>
