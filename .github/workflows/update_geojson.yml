@@ -45,6 +45,24 @@ jobs:
           curl -o data/hypo20240126.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240126.geojson
           curl -o data/hypo20240127.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240127.geojson
           curl -o data/hypo20240128.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240128.geojson
+          curl -o data/hypo20240129.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240129.geojson
+          curl -o data/hypo20240130.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240130.geojson
+          curl -o data/hypo20240131.geojson https://www.jma.go.jp/bosai/hypo/data/2024/01/hypo20240131.geojson
+          curl -o data/hypo20240201.geojson https://www.jma.go.jp/bosai/hypo/data/2024/02/hypo20240201.geojson
+          curl -o data/hypo20240202.geojson https://www.jma.go.jp/bosai/hypo/data/2024/02/hypo20240202.geojson
+          curl -o data/hypo20240203.geojson https://www.jma.go.jp/bosai/hypo/data/2024/02/hypo20240203.geojson
+          curl -o data/hypo20240204.geojson https://www.jma.go.jp/bosai/hypo/data/2024/02/hypo20240204.geojson
+          curl -o data/hypo20240205.geojson https://www.jma.go.jp/bosai/hypo/data/2024/02/hypo20240205.geojson
+          curl -o data/hypo20240206.geojson https://www.jma.go.jp/bosai/hypo/data/2024/02/hypo20240206.geojson
+          curl -o data/hypo20240207.geojson https://www.jma.go.jp/bosai/hypo/data/2024/02/hypo20240207.geojson
+          curl -o data/hypo20240208.geojson https://www.jma.go.jp/bosai/hypo/data/2024/02/hypo20240208.geojson
+          curl -o data/hypo20240209.geojson https://www.jma.go.jp/bosai/hypo/data/2024/02/hypo20240209.geojson
+          curl -o data/hypo20240210.geojson https://www.jma.go.jp/bosai/hypo/data/2024/02/hypo20240210.geojson
+          curl -o data/hypo20240211.geojson https://www.jma.go.jp/bosai/hypo/data/2024/02/hypo20240211.geojson
+          curl -o data/hypo20240212.geojson https://www.jma.go.jp/bosai/hypo/data/2024/02/hypo20240212.geojson
+          curl -o data/hypo20240213.geojson https://www.jma.go.jp/bosai/hypo/data/2024/02/hypo20240213.geojson
+          curl -o data/hypo20240214.geojson https://www.jma.go.jp/bosai/hypo/data/2024/02/hypo20240214.geojson
+          curl -o data/hypo20240215.geojson https://www.jma.go.jp/bosai/hypo/data/2024/02/hypo20240215.geojson
           
       - name: Commit and Push Changes
         run: |
